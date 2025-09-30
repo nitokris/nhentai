@@ -65,3 +65,4 @@ static
 .ds_store
 .DS_Store
 .kotlin
+*.db

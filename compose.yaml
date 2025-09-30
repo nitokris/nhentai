@@ -1,5 +1,5 @@
 services:
-  app:
+  service:
     build:
       context: ./service
       dockerfile: Dockerfile
@@ -14,7 +14,7 @@ services:
       # 可选：静态资源持久化
       - ./static:/app/static
     networks:
-      - appnet
+      - nhentai
   nginx:
     build:
       context: ./nginx
@@ -23,9 +23,9 @@ services:
     ports:
       - "81:80"
     depends_on:
-      - app
+      - service
     networks:
-      - appnet
+      - nhentai
 networks:
-  appnet:
+  nhentai:
     driver: bridge

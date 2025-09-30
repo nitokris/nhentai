@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: ncomic-springboot
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:sqlite:./ncomic.db}
+    driver-class-name: org.sqlite.JDBC
+  exposed:
+    generate-ddl: true
+    show-sql: true

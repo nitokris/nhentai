@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    container_name: my-gradle-app
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+      - SPRING_DATASOURCE_URL:jdbc:sqlite:/app/data/ncomic.db
+    restart: unless-stopped
+    volumes:
+      # SQLite 数据持久化到宿主机
+      - ./data:/app/data
+      # 可选：静态资源持久化
+      - ./static:/app/static
+    networks:
+      - appnet
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "81:80"
+    depends_on:
+      - app
+    networks:
+      - appnet
+networks:
+  appnet:
+    driver: bridge

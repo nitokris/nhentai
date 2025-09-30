@@ -3,7 +3,7 @@ services:
     build:
       context: ./service
       dockerfile: Dockerfile
-    container_name: my-gradle-app
+    container_name: nhentai-service
     environment:
       - JAVA_OPTS=-Xms256m -Xmx512m
       - SPRING_DATASOURCE_URL:jdbc:sqlite:/app/data/ncomic.db

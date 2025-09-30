@@ -59,3 +59,9 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+./data
+./static
+.ds_store
+.DS_Store
+.kotlin/

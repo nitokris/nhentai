@@ -41,7 +41,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(platform("org.http4k:http4k-bom:6.18.1.0"))
-
+    implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-server-undertow")
     implementation("org.http4k:http4k-client-apache")

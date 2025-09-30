@@ -1,7 +1,10 @@
 #!/bin/bash
+export DOCKER_BUILDKIT=0
+
 .DEFAULT_GOAL := dev
 
 .PHONY: dev build tag push all
+
 
 all: build tag push
 

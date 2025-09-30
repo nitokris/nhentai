@@ -66,3 +66,5 @@ static
 .DS_Store
 .kotlin
 *.db
+logs
+log

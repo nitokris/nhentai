@@ -6,13 +6,13 @@ services:
     container_name: nhentai-service
     environment:
       - JAVA_OPTS=-Xms256m -Xmx512m
-      - SPRING_DATASOURCE_URL:jdbc:sqlite:/app/data/ncomic.db
     restart: unless-stopped
     volumes:
       # SQLite 数据持久化到宿主机
       - ./data:/app/data
       # 可选：静态资源持久化
       - ./static:/app/static
+      - ./logs:/app/logs
     networks:
       - nhentai
   nginx:
@@ -20,6 +20,8 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     container_name: nginx
+    volumes:
+      - ./static:/app/static
     ports:
       - "81:80"
     depends_on:

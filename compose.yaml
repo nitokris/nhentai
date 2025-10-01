@@ -8,7 +8,7 @@ services:
     platform: linux/amd64
     environment:
       - JAVA_OPTS=-Xms256m -Xmx512m
-    restart: unless-stopped
+    restart: always
     volumes:
       # SQLite 数据持久化到宿主机
       - ./data:/app/data
@@ -23,6 +23,7 @@ services:
       dockerfile: nginx/Dockerfile
     container_name: nginx
     platform: linux/amd64
+    restart: always
     image: 192.168.1.236/nhentai/webui:latest
     volumes:
       - ./static:/app/static

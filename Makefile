@@ -3,7 +3,7 @@ export DOCKER_BUILDKIT=0
 
 .DEFAULT_GOAL := dev
 
-.PHONY: dev build tag push webui all
+.PHONY: dev build push webui all
 
 
 all: build push
@@ -11,6 +11,8 @@ all: build push
 dev:
 	docker compose up -d --build --force-recreate
 build:
+	docker compose build
+nocache:
 	docker compose build --no-cache
 push: build
 	docker compose push

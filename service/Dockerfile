@@ -18,4 +18,4 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=builder /app/build/libs/app.jar app.jar
 
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+CMD ["sh", "-c", "java -Dhttp.proxyHost=${HTTP_PROXY_HOST} -Dhttp.proxyPort=${HTTP_PROXY_PORT} -Dhttps.proxyHost=${HTTPS_PROXY_HOST} -Dhttps.proxyPort=${HTTPS_PROXY_PORT} -jar /app/app.jar"]

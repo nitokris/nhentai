@@ -11,4 +11,6 @@ class HelloController {
     @GetMapping
     fun sayHello() = "hello"
 
+    @GetMapping("check")
+    fun checkPollExecute() = "Poll"
 }

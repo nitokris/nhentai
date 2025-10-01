@@ -2,6 +2,7 @@ package com.nitokrisalpha.domain.service
 
 import com.fleeksoft.ksoup.Ksoup
 import com.nitokrisalpha.common.PageResponse
+import com.nitokrisalpha.common.Pagination
 import com.nitokrisalpha.domain.entity.MagnetMetaData
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
@@ -31,7 +32,10 @@ class MagnetProviderImpl(
         val request = getRequest(query, currentPage)
         val response = client(request)
         if (!response.status.successful) {
-            return PageResponse(data = emptyList(), page = 0, size = 0, totalPage = 0, total = 0)
+            return PageResponse(
+                data = emptyList(),
+                pagination = Pagination(page = 0, size = 0, totalPage = 0, total = 0)
+            )
         }
         val body = response.bodyString()
         val document = Ksoup.parse(body)
@@ -52,10 +56,12 @@ class MagnetProviderImpl(
         }
         return PageResponse(
             data = list,
-            page = currentPage,
-            size = list.size,
-            totalPage = if (total % 75 == 0) total / 75 else total / 75 + 1,
-            total = total
+            pagination = Pagination(
+                page = currentPage,
+                size = list.size,
+                totalPage = if (total % 75 == 0) total / 75 else total / 75 + 1,
+                total = total
+            )
         )
     }
 }

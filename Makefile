@@ -6,15 +6,13 @@ export DOCKER_BUILDKIT=0
 .PHONY: dev build tag push webui all
 
 
-all: build tag push
+all: build push
 
 dev:
 	docker compose up -d --build --force-recreate
 build:
 	docker compose build --no-cache
-tag: build
-	docker tag nhentai:latest 192.168.1.236:5000/nhentai:latest
-push: tag
+push: build
 	docker compose push
 webui:
 	docker compose build webui

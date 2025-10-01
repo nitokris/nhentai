@@ -4,6 +4,7 @@ services:
       context: ./service
       dockerfile: Dockerfile
     container_name: nhentai-service
+    image: 192.168.1.236/nhentai/service:latest
     environment:
       - JAVA_OPTS=-Xms256m -Xmx512m
     restart: unless-stopped
@@ -20,6 +21,7 @@ services:
       context: .
       dockerfile: nginx/Dockerfile
     container_name: nginx
+    image: 192.168.1.236/nhentai/webui:latest
     volumes:
       - ./static:/app/static
     ports:

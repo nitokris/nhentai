@@ -15,8 +15,7 @@ import org.jetbrains.exposed.v1.jdbc.upsert
 import org.springframework.stereotype.Component
 
 @Component
-class WorkRepositoryImpl(
-) : WorkRepository {
+class WorkRepositoryImpl: WorkRepository {
     override fun save(entity: Work) = transaction {
         val id = Works.upsert(Works.businessId, Works.site, Works.siteId) {
             it[businessId] = entity.id.value

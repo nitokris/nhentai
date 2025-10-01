@@ -15,10 +15,10 @@ services:
       - ./logs:/app/logs
     networks:
       - nhentai
-  nginx:
+  webui:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
     container_name: nginx
     volumes:
       - ./static:/app/static

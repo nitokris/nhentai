@@ -3,7 +3,7 @@ export DOCKER_BUILDKIT=0
 
 .DEFAULT_GOAL := dev
 
-.PHONY: dev build tag push all
+.PHONY: dev build tag push webui all
 
 
 all: build tag push
@@ -16,3 +16,5 @@ tag: build
 	docker tag nhentai:latest 192.168.1.236:5000/nhentai:latest
 push: tag
 	docker compose push
+webui:
+	docker compose build webui

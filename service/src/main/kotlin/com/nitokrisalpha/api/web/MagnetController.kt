@@ -21,6 +21,6 @@ class MagnetController(
     }
 
     @GetMapping("search")
-    fun searchMagnets(@RequestParam("keyword") query: String, page: Int) =
+    fun searchMagnets(@RequestParam("keyword") query: String,@RequestParam page: Int) =
         magnetService.searchMagnets(query, page)
 }

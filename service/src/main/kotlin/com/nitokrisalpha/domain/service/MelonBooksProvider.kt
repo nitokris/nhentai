@@ -2,6 +2,7 @@ package com.nitokrisalpha.domain.service
 
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.select.Elements
+import com.nitokrisalpha.common.logger
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.WorkMetaData
 import org.http4k.core.HttpHandler
@@ -26,16 +27,16 @@ class MelonBooksProvider(
                 Accept-Language: en,zh-CN;q=0.9,zh;q=0.8
                 Cache-Control: max-age=0
                 Connection: keep-alive
-                Cookie: _rt.uid=10a56a00-1213-11f0-5ba6-7e26eb8b1816; _bdck=BD.o3UYo.po5MDPI.3; _bdnvf=YmQ0X3Ny0cs3Do3M1yvIN/V1CfDUMzQ3MbYwNTY2NTEyMtAzBgA=; AUTH_ADULT=1; ECSESSID=0qevo4g2ftv0lqmia0dtjv5g51; MELONBOOKS_CHECK_NEWS=1; MELONBOOKS_CHECK_NEWS_SP=1; MELONBOOKS_CHECK_SHOP=1; MELONBOOKS_CS_CHECK_NEWS=1; _rt.xd=eef985a4; _bdsid=BD.o3UYo.po5MDPI.1758976323031.3; _bd_prev_page_ex=YmQ0X3Ny0csoKSkoVjV2VDVyA6Ly8nK93NSc/Lyk/PzsYr3kfL2sAqBwQVF+SmlySTGQmZJakpiZo1eQUaBqDBOPz0xRNXYxNrQ0NjUz0TMGAA==; CUSTOMER_READING[0]=3193564; CUSTOMER_READING[1]=3082697; CUSTOMER_READING[2]=2687405
+                Cookie: _rt.uid=10a56a00-1213-11f0-5ba6-7e26eb8b1816; _bdck=BD.o3UYo.po5MDPI.3; _bdnvf=YmQ0X3Ny0cs3Do3M1yvIN/V1CfDUMzQ3MbYwNTY2NTEyMtAzBgA=; AUTH_ADULT=1; ECSESSID=u5ekvkcqeht7j5lvcn4nteddr0; MELONBOOKS_CHECK_NEWS=1; MELONBOOKS_CHECK_NEWS_SP=1; MELONBOOKS_CHECK_SHOP=1; MELONBOOKS_CS_CHECK_NEWS=1; _rt.xd=eef985a4; _bdsid=BD.o3UYo.po5MDPI.1759405837395.3; _bd_prev_page_ex=YmQ0X3Ny0csoKSkoVjV2VDVyA6Ly8nK93NSc/Lyk/PzsYr3kfL2sAqBwSmpJYmYOnKFXkFGgauxWUJSfUppcEp+ZomrsYmxoaWhpaaBnDAA=; CUSTOMER_READING[0]=3191990; CUSTOMER_READING[1]=3188921; CUSTOMER_READING[2]=3114947; CUSTOMER_READING[3]=2839209; CUSTOMER_READING[4]=3193564; CUSTOMER_READING[5]=2746730; CUSTOMER_READING[6]=3082697; CUSTOMER_READING[7]=2687405
                 DNT: 1
                 Host: www.melonbooks.co.jp
+                Referer: https://www.melonbooks.co.jp/detail/detail.php?product_id=${id}
                 Sec-Fetch-Dest: document
                 Sec-Fetch-Mode: navigate
-                Sec-Fetch-Site: none
-                Sec-Fetch-User: ?1
+                Sec-Fetch-Site: same-origin
                 Upgrade-Insecure-Requests: 1
-                User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
-                sec-ch-ua: "Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"
+                User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+                sec-ch-ua: "Google Chrome";v="141", "Not?A_Brand";v="8", "Chromium";v="141"
                 sec-ch-ua-mobile: ?0
                 sec-ch-ua-platform: "macOS"
             """.trimIndent().split("\n")
@@ -64,6 +65,7 @@ class MelonBooksProvider(
         val request = getRequest(id)
         val response = client(request)
         if (!response.status.successful) {
+            logger.info("response")
             throw RuntimeException("Not found")
         }
         val html = response.bodyString()

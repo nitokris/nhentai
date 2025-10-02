@@ -1,11 +1,11 @@
 <script setup lang="ts">
 
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref} from "vue";
 import {api} from "boot/axios";
 
 const router = useRouter();
-const route = useRouter();
+const route = useRoute();
 
 interface Work {
   id: number;
@@ -31,7 +31,7 @@ const detail = ref<Work | null>(null)
 
 const loading = ref(true);
 
-api.get('/api/work/abafd5f32ca849a09dbf082dd6c2bcc0').then(res => {
+api.get(`/api/work/${route.params.id }`).then(res => {
   console.log(res)
   detail.value = res.data
   console.log(detail.value)

@@ -24,7 +24,6 @@
       show-if-above
       bordered
       overlay
-      behavior="mobile"
     >
       <q-list>
         <q-item-label
@@ -50,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import EssentialLink, {type EssentialLinkProps} from 'components/EssentialLink.vue';
 import WorkDetail from "pages/WorkDetail.vue";
 import ComicRead from "pages/ComicRead.vue";
@@ -86,4 +85,8 @@ const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+onMounted(() => {
+  leftDrawerOpen.value = false
+})
 </script>

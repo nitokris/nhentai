@@ -8,6 +8,7 @@
           round
           icon="menu"
           aria-label="Menu"
+          overlay
           @click="toggleLeftDrawer"
         />
 

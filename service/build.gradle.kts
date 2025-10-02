@@ -48,7 +48,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fleeksoft.ksoup/ksoup
     implementation("com.fleeksoft.ksoup:ksoup:0.2.5")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-
+// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
     implementation(libs.exposed.core)
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.dao)

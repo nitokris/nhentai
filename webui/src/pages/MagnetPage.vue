@@ -2,6 +2,7 @@
 
 
 import MagnetSearchTable from "components/MagnetSearchTable.vue";
+
 </script>
 
 <template>

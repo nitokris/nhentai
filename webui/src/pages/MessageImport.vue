@@ -22,7 +22,7 @@ function submitUrl() {
         position: 'top',
         timeout: 3000
       })
-      router.push({path: `/detail/${id}`})
+      // router.push({path: `/detail/${id}`})
     }).catch(error => {
     Notify.create({
       type: 'negative', // 错误提示

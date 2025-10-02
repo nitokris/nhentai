@@ -10,3 +10,6 @@ spring:
 logging:
   file:
     path: ./logs/
+server:
+  servlet:
+    context-path: /api

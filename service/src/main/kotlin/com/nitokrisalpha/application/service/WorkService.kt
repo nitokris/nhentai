@@ -39,25 +39,29 @@ class WorkService(
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun saveNewWork(url: String): WorkId {
-        val site = Site.fromUrl(url)
-        val id = extractCid(url) ?: throw IllegalArgumentException("cant find cid")
-        val workMetadataProvider: WorkMetaDataProvider = workMetadataProviderFactory.getProvider(site)
-            ?: throw IllegalArgumentException("No metadata provider found for site: $site")
-        val metaData = workMetadataProvider.fetchMetaData(id)
-        val siteInfo = SiteInfo(site, id)
-        var work = workRepository.findBySiteInfo(siteInfo)
-        if (work != null) {
-            work.changeMetaData(metaData)
-            workRepository.save(work)
-            return work.id
+    fun saveNewWork(url: String): Unit {
+        val urls = url.split("\n")
+        urls.reversed().forEach { url ->
+            val site = Site.fromUrl(url)
+            val id = extractCid(url) ?: throw IllegalArgumentException("cant find cid")
+            val workMetadataProvider: WorkMetaDataProvider = workMetadataProviderFactory.getProvider(site)
+                ?: throw IllegalArgumentException("No metadata provider found for site: $site")
+            val metaData = workMetadataProvider.fetchMetaData(id)
+            val siteInfo = SiteInfo(site, id)
+            var work = workRepository.findBySiteInfo(siteInfo)
+            if (work != null) {
+                work.changeMetaData(metaData)
+                workRepository.save(work)
+                 work.id
+            }
+            work = Work(
+                id = newId(),
+                metaData = metaData,
+                siteInfo = siteInfo
+            )
+             workRepository.save(work)
         }
-        work = Work(
-            id = newId(),
-            metaData = metaData,
-            siteInfo = siteInfo
-        )
-        return workRepository.save(work)
+
     }
 
     fun findOne(id: String): Work? {

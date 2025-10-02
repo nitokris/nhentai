@@ -8,6 +8,7 @@ import com.nitokrisalpha.domain.entity.WorkId
 import com.nitokrisalpha.infranstructure.jdbc.table.Works.site
 import org.http4k.lens.StringBiDiMappings.url
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.function.RequestPredicates.param
 
 @RestController
 @RequestMapping("work")
@@ -26,7 +27,7 @@ class WorkController(
     }
 
     @PostMapping("url")
-    fun saveWorkUrl(@RequestBody param: Map<String, String>): WorkId {
+    fun saveWorkUrl(@RequestBody param: Map<String, String>): Unit {
         return workService.saveNewWork(param["url"] as String)
     }
 

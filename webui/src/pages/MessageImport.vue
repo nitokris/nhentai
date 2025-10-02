@@ -46,7 +46,7 @@ function submitUrl() {
           </q-item>
           <q-separator></q-separator>
           <div class="q-pa-md">
-            <q-input type="text" v-model="detailUrl"/>
+            <q-input type="textarea" v-model="detailUrl"/>
             <q-btn type="button" @click="submitUrl" color="primary">提交</q-btn>
           </div>
         </q-card>

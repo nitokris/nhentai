@@ -2,6 +2,7 @@ package com.nitokrisalpha.domain.service
 
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.select.Elements
+import com.nitokrisalpha.common.logger
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.WorkMetaData
 import org.http4k.core.HttpHandler
@@ -90,7 +91,7 @@ class FanzaProviderImpl(
             val finalUpdateDate = items.findInfo("最終更新日")
             val tagHtmlTags = items.findElements("ジャンル", "a.genreTag__txt")
             val tags = tagHtmlTags.eachText()
-            return _root_ide_package_.com.nitokrisalpha.domain.entity.WorkMetaData(
+            return WorkMetaData(
                 title = title,
                 description = description,
                 previews = previews,
@@ -102,6 +103,7 @@ class FanzaProviderImpl(
 
                 )
         }
+        logger.error("failed to fetch metadata from fanza for id: $id,http status: ${response.status}")
         throw RuntimeException("failed to fetch metadata from fanza for id: $id")
     }
 

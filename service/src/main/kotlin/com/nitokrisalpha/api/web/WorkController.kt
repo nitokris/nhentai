@@ -1,5 +1,6 @@
 package com.nitokrisalpha.api.web
 
+import com.nitokrisalpha.application.dto.WorkDto
 import com.nitokrisalpha.application.service.WorkService
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.Work
@@ -12,10 +13,16 @@ class WorkController(
     val workService: WorkService
 ) {
 
+    @GetMapping("recent")
+    fun recent(): Collection<WorkDto> {
+        return workService.recent()
+    }
+
     @PostMapping("new")
     fun saveNewWork(@RequestParam id: String, site: Site): WorkId {
-        return workService.saveNewWork(id,site)
+        return workService.saveNewWork(id, site)
     }
+
 
     @GetMapping("{id}")
     fun workDetail(@PathVariable id: String): Work? {

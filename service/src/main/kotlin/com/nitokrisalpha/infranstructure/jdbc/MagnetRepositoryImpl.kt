@@ -3,6 +3,7 @@ package com.nitokrisalpha.infranstructure.jdbc
 import com.nitokrisalpha.domain.entity.Magnet
 import com.nitokrisalpha.domain.entity.MagnetId
 import com.nitokrisalpha.domain.repository.MagnetRepository
+import com.nitokrisalpha.domain.specification.Specification
 import com.nitokrisalpha.infranstructure.jdbc.table.Magnets
 import org.jetbrains.exposed.v1.jdbc.batchUpsert
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -19,6 +20,10 @@ class MagnetRepositoryImpl : MagnetRepository {
     }
 
     override fun delete(entity: Magnet) {
+        TODO("Not yet implemented")
+    }
+
+    override fun find(specification: Specification<Magnet>): Collection<Magnet> {
         TODO("Not yet implemented")
     }
 

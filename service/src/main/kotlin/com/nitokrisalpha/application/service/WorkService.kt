@@ -1,9 +1,12 @@
 package com.nitokrisalpha.application.service
 
+import com.nitokrisalpha.application.dto.WorkDto
 import com.nitokrisalpha.common.newId
 import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
 import com.nitokrisalpha.domain.service.WorkMetaDataProvider
+import com.nitokrisalpha.domain.specification.Specification
+import com.nitokrisalpha.infranstructure.jdbc.WorkQueryRepository
 import com.nitokrisalpha.infranstructure.metadata.WorkMetadataProviderFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class WorkService(
     private val workRepository: WorkRepository,
-    private val workMetadataProviderFactory: WorkMetadataProviderFactory
+    private val workMetadataProviderFactory: WorkMetadataProviderFactory,
+    private val workQueryRepository: WorkQueryRepository
 ) {
     @Transactional(rollbackFor = [Exception::class])
     fun saveNewWork(id: String, site: Site): WorkId {
@@ -55,5 +59,9 @@ class WorkService(
     fun dropWork(id: String) {
         val work = workRepository.findById(WorkId(id)) ?: throw IllegalArgumentException("Work with id $id not found")
         workRepository.delete(work)
+    }
+
+    fun recent(): Collection<WorkDto> {
+        return workQueryRepository.recent(10)
     }
 }

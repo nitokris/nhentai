@@ -2,6 +2,7 @@ package com.nitokrisalpha.infranstructure.jdbc
 
 import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
+import com.nitokrisalpha.domain.specification.Specification
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
 import com.nitokrisalpha.infranstructure.jdbc.table.Works
 import org.jetbrains.exposed.v1.core.and
@@ -50,6 +51,10 @@ class WorkRepositoryImpl: WorkRepository {
                 Works.businessId eq entity.id.value
             }
         }
+    }
+
+    override fun find(specification: Specification<Work>): Collection<Work> {
+        TODO("Not yet implemented")
     }
 
     override fun findById(id: WorkId): Work? = transaction {

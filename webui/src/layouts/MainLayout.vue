@@ -8,7 +8,6 @@
           round
           icon="menu"
           aria-label="Menu"
-          overlay
           @click="toggleLeftDrawer"
         />
 
@@ -24,6 +23,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
+      overlay
     >
       <q-list>
         <q-item-label

@@ -24,6 +24,7 @@
       show-if-above
       bordered
       overlay
+      behavior="mobile"
     >
       <q-list>
         <q-item-label

@@ -1,6 +1,7 @@
 package com.nitokrisalpha.application.service
 
 import com.nitokrisalpha.application.dto.WorkDto
+import com.nitokrisalpha.common.logger
 import com.nitokrisalpha.common.newId
 import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
@@ -59,7 +60,11 @@ class WorkService(
                 metaData = metaData,
                 siteInfo = siteInfo
             )
-             workRepository.save(work)
+            try {
+                workRepository.save(work)
+            }catch (e: Exception){
+                logger.error("swallow exception,and message is:{}",e.message)
+            }
         }
 
     }

@@ -39,7 +39,6 @@ class WorkService(
         return workRepository.save(work)
     }
 
-    @Transactional(rollbackFor = [Exception::class])
     fun saveNewWork(url: String): Unit {
         val urls = url.split("\n")
         urls.reversed().forEach { url ->

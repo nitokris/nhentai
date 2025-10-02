@@ -1,6 +1,8 @@
 package com.nitokrisalpha.infranstructure.config
 
 import com.nitokrisalpha.common.logger
+import org.jetbrains.exposed.v1.core.DatabaseConfig
+import org.jetbrains.exposed.v1.core.DatabaseConfig.Companion
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -13,6 +15,13 @@ import javax.sql.DataSource
 @Configuration
 @ConditionalOnClass(value = [JDBC::class])
 class SQLiteConfig {
+
+    @Bean
+    open fun databaseConfig(): DatabaseConfig {
+        return DatabaseConfig {
+            useNestedTransactions = true
+        }
+    }
 
     @Bean
     fun dataSourceInitializer(dataSource: DataSource): DataSourceInitializer {

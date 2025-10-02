@@ -12,6 +12,9 @@ enum class Site {
             if(url.contains("dmm.co.jp")){
                 return FANZA
             }
+            if(url.contains("melonbooks.co.jp")){
+                return MELON
+            }
             return UNKNOWN
         }
     }

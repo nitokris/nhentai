@@ -7,25 +7,41 @@ import org.apache.hc.client5.http.impl.classic.HttpClients
 import org.apache.hc.core5.http.HttpHost
 import org.http4k.client.ApacheClient
 import org.http4k.core.HttpHandler
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.context.properties.bind.ConstructorBinding
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.stereotype.Component
+
+@ConfigurationProperties(prefix = "nhentai.http4k")
+class Http4kConfigProperties {
+    val proxyHost: String
+    val proxyPort: Int
+    val proxyEnabled: Boolean
+
+    @ConstructorBinding
+    constructor(proxyHost: String, proxyPort: Int, proxyEnabled: Boolean) {
+        this.proxyHost = proxyHost
+        this.proxyPort = proxyPort
+        this.proxyEnabled = proxyEnabled
+    }
+}
 
 @Configuration
 @ConditionalOnClass(value = [ApacheClient::class])
-@ConfigurationProperties(prefix = "nhentai.http4k")
 class Http4kConfig(
-    private val proxyHost: String = "127.0.0.1",
-    private val proxyPort: Int = 7890,
-    private val proxyEnabled: Boolean = false
+    private val properties: Http4kConfigProperties
 ) {
+
     init {
-        if (proxyEnabled && (proxyHost.isBlank() || proxyPort == 0)) {
+        if (properties.proxyEnabled && (properties.proxyHost.isBlank() || properties.proxyPort == 0)) {
             throw IllegalArgumentException("Proxy is enabled but host or port is not set")
         }
-        if (proxyEnabled) {
-            logger.info("Http4kConfig: proxy is enabled, host: $proxyHost, port: $proxyPort")
+        if (properties.proxyEnabled) {
+            logger.info("Http4kConfig: proxy is enabled, host: ${properties.proxyHost}, port: ${properties.proxyPort}")
         } else {
             logger.info("Http4kConfig: proxy is disabled")
         }
@@ -40,8 +56,8 @@ class Http4kConfig(
                     .setCookieSpec(IGNORE)
                     .build()
             )
-        if(proxyEnabled){
-            builder.setProxy(HttpHost(proxyHost, proxyPort))
+        if (properties.proxyEnabled) {
+            builder.setProxy(HttpHost(properties.proxyHost, properties.proxyPort))
         }
         return ApacheClient(client = builder.build())
     }

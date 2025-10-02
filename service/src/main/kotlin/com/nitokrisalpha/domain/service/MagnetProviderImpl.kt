@@ -41,11 +41,12 @@ class MagnetProviderImpl(
         val document = Ksoup.parse(body)
         val trList = document.select(".table-responsive tbody tr")
         val list = trList.map { item ->
+            val category = item.select("td")[0].selectFirst("img")?.attr("src")?.lowercase() ?: "all"
             val title = item.selectFirst("td[colspan=2]")?.text() ?: ""
             val magnet = item.selectFirst("a[href^='magnet']")?.attr("href") ?: ""
             val size = item.select("td")[3].text()
             val date = item.select("td")[4].text()
-            MagnetMetaData(title = title, url = magnet, size = size, date = date)
+            MagnetMetaData(title = title, url = magnet, size = size, date = date, category = category)
         }
         val totalStr =
             document.select("div.pagination-page-info").text()

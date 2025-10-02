@@ -5,6 +5,7 @@ data class MagnetMetaData(
     val url: String,
     val size: String,
     val date: String,
+    val category: String
 ) {
 
     init {

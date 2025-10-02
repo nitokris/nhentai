@@ -5,6 +5,8 @@ import com.nitokrisalpha.application.service.WorkService
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.Work
 import com.nitokrisalpha.domain.entity.WorkId
+import com.nitokrisalpha.infranstructure.jdbc.table.Works.site
+import org.http4k.lens.StringBiDiMappings.url
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -21,6 +23,11 @@ class WorkController(
     @PostMapping("new")
     fun saveNewWork(@RequestParam id: String, site: Site): WorkId {
         return workService.saveNewWork(id, site)
+    }
+
+    @PostMapping("url")
+    fun saveWorkUrl(@RequestBody param: Map<String, String>): WorkId {
+        return workService.saveNewWork(param["url"] as String)
     }
 
 

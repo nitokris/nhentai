@@ -1,42 +1,37 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
+import {api} from "boot/axios";
+import {Notify} from "quasar";
+import {useRouter} from "vue-router";
 
-const step = ref(1)
-const done1 = ref(false)
-const done2 = ref(false)
-const done3 = ref(false)
+const router = useRouter()
 
-function reset() {
-  done1.value = false
-  done2.value = false
-  done3.value = false
-  step.value = 1
+const detailUrl = ref('')
+
+function submitUrl() {
+  api.post('/api/work/url', {url: detailUrl.value})
+    .then(resp => {
+      if (resp.status !== 200) {
+        Promise.reject(resp.statusText)
+      }
+      const id = resp.data.id
+      Notify.create({
+        type: 'positive',
+        message: '操作成功',
+        position: 'top',
+        timeout: 3000
+      })
+      router.push({path: `/detail/${id}`})
+    }).catch(error => {
+    Notify.create({
+      type: 'negative', // 错误提示
+      message: error,
+      position: 'top',  // 显示在顶部
+      timeout: 3000     // 3秒后自动消失
+    })
+  })
 }
-
-interface DataSourceType {
-  label: string
-  value: string
-}
-
-const chooseDatasource = ref<DataSourceType>(null)
-
-const dataSourceType: DataSourceType[] = [
-  {
-    label: '哔咔漫画',
-    value: 'PICA'
-  },
-  {
-    label: 'DLSite',
-    value: 'DLSITE'
-  },
-  {
-    label: 'Fanza',
-    value: 'FANZA'
-  }
-]
-
-const comicId = ref('')
 
 </script>
 
@@ -51,70 +46,8 @@ const comicId = ref('')
           </q-item>
           <q-separator></q-separator>
           <div class="q-pa-md">
-            <q-btn label="Reset" push color="white" text-color="primary" @click="reset" class="q-mb-md"/>
-
-            <q-stepper
-              v-model="step"
-              header-nav
-              ref="stepper"
-              color="primary"
-              animated
-              flat
-            >
-              <q-step
-                :name="1"
-                title="选择数据源"
-                icon="settings"
-                :done="done1"
-              >
-                <q-form>
-                  <div style="max-width: 300px">
-                    <q-select name="dataSourceType" :options="dataSourceType" v-model="chooseDatasource" filled
-                              clearable label="数据源类型"/>
-                    <q-input v-model="comicId" name="comicId" label="唯一ID" type="text" filled
-                             style="margin-top: 5px"/>
-                  </div>
-                </q-form>
-
-
-                <q-stepper-navigation>
-                  <q-btn @click="() => { done1 = true; step = 2 }" color="primary" label="Continue"/>
-                </q-stepper-navigation>
-              </q-step>
-
-              <q-step
-                :name="2"
-                title="数据校准"
-                caption="Optional"
-                icon="create_new_folder"
-                :done="done2"
-              >
-
-                <q-form>
-
-                </q-form>
-
-                <q-stepper-navigation>
-                  <q-btn @click="() => { done2 = true; step = 3 }" color="primary" label="Continue"/>
-                  <q-btn flat @click="step = 1" color="primary" label="Back" class="q-ml-sm"/>
-                </q-stepper-navigation>
-              </q-step>
-
-              <q-step
-                :name="3"
-                title="结束"
-                icon="add_comment"
-                :done="done3"
-              >
-                Try out different ad text to see what brings in the most customers, and learn how to
-                enhance your ads using features like ad extensions. If you run into any problems with
-                your ads, find out how to tell if they're running and how to resolve approval issues.
-
-                <q-stepper-navigation>
-                  <q-btn color="primary" @click="done3 = true" label="Finish"/>
-                </q-stepper-navigation>
-              </q-step>
-            </q-stepper>
+            <q-input type="text" v-model="detailUrl"/>
+            <q-btn type="button" @click="submitUrl" color="primary">提交</q-btn>
           </div>
         </q-card>
       </div>

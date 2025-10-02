@@ -7,6 +7,7 @@ import com.nitokrisalpha.domain.repository.WorkRepository
 import com.nitokrisalpha.domain.service.WorkMetaDataProvider
 import com.nitokrisalpha.domain.specification.Specification
 import com.nitokrisalpha.infranstructure.jdbc.WorkQueryRepository
+import com.nitokrisalpha.infranstructure.jdbc.table.Works.site
 import com.nitokrisalpha.infranstructure.metadata.WorkMetadataProviderFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +20,28 @@ class WorkService(
 ) {
     @Transactional(rollbackFor = [Exception::class])
     fun saveNewWork(id: String, site: Site): WorkId {
+        val workMetadataProvider: WorkMetaDataProvider = workMetadataProviderFactory.getProvider(site)
+            ?: throw IllegalArgumentException("No metadata provider found for site: $site")
+        val metaData = workMetadataProvider.fetchMetaData(id)
+        val siteInfo = SiteInfo(site, id)
+        var work = workRepository.findBySiteInfo(siteInfo)
+        if (work != null) {
+            work.changeMetaData(metaData)
+            workRepository.save(work)
+            return work.id
+        }
+        work = Work(
+            id = newId(),
+            metaData = metaData,
+            siteInfo = siteInfo
+        )
+        return workRepository.save(work)
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    fun saveNewWork(url: String): WorkId {
+        val site = Site.fromUrl(url)
+        val id = extractCid(url) ?: throw IllegalArgumentException("cant find cid")
         val workMetadataProvider: WorkMetaDataProvider = workMetadataProviderFactory.getProvider(site)
             ?: throw IllegalArgumentException("No metadata provider found for site: $site")
         val metaData = workMetadataProvider.fetchMetaData(id)
@@ -64,4 +87,18 @@ class WorkService(
     fun recent(count: Int): Collection<WorkDto> {
         return workQueryRepository.recent(count)
     }
+
+    companion object DmmUtil {
+        private val cidRegex = Regex("cid=([^&/]+)")
+
+        /**
+         * 从DMM链接中提取cid
+         * @param url DMM商品链接
+         * @return cid，例如 d_652148，如果不存在返回 null
+         */
+        fun extractCid(url: String): String? {
+            return cidRegex.find(url)?.groupValues?.get(1)
+        }
+    }
+
 }

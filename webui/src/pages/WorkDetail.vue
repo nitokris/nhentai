@@ -49,7 +49,7 @@ const handleStar = async () => {
   }
 }
 
-const slide = ref(1)
+const slide = ref(0)
 
 const score = ref(0)
 

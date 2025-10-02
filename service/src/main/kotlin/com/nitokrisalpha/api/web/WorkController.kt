@@ -14,8 +14,8 @@ class WorkController(
 ) {
 
     @GetMapping("recent")
-    fun recent(): Collection<WorkDto> {
-        return workService.recent()
+    fun recent(@RequestParam("count") count: Int): Collection<WorkDto> {
+        return workService.recent(count)
     }
 
     @PostMapping("new")

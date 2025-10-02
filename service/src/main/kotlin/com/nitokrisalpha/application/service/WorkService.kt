@@ -61,7 +61,7 @@ class WorkService(
         workRepository.delete(work)
     }
 
-    fun recent(): Collection<WorkDto> {
-        return workQueryRepository.recent(10)
+    fun recent(count: Int): Collection<WorkDto> {
+        return workQueryRepository.recent(count)
     }
 }

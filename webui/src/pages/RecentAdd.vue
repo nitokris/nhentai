@@ -15,9 +15,13 @@ interface Work {
 const loading = ref(true);
 
 const works = ref<Work[]>([]);
+const rowsPerPage = 8
 
+const pagination: QPagination = {
+  rowsPerPage: rowsPerPage
+}
 onMounted(async () => {
-  api.get("/api/work/recent").then(res => {
+  api.get(`/api/work/recent?count=${pagination.rowsPerPage}`).then(res => {
     console.log(res)
     works.value = res.data
     loading.value = false
@@ -30,11 +34,6 @@ const columns: QTableColumn[] = [{
   field: row => row.cover,
   label: 'cover',
 }]
-
-
-const pagination: QPagination = {
-  rowsPerPage: 10
-}
 
 
 </script>

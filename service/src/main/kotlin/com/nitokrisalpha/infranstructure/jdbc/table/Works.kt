@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
+import org.jetbrains.exposed.v1.datetime.CurrentDateTime
 import org.jetbrains.exposed.v1.datetime.datetime
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -21,8 +22,8 @@ object Works : LongIdTable() {
     val circle = varchar("circle", 255).default("")
     val site = varchar("site", 50).default("UNKNOWN")
     val siteId = varchar("site_id", 255).default("")
-    val createdAt = datetime("created_at").default(LocalDateTime.now())
-    val updatedAt = datetime("updated_at").default(LocalDateTime.now())
+    val createdAt = datetime("created_at").defaultExpression(CurrentDateTime)
+    val updatedAt = datetime("updated_at").defaultExpression(CurrentDateTime)
 
     init {
         uniqueIndex(businessId, site, siteId)

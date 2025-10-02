@@ -12,7 +12,7 @@ import kotlin.text.split
 class WorkQueryRepository {
 
     fun recent(count: Int): Collection<WorkDto> = transaction {
-        Works.selectAll().limit(count).orderBy(Works.createdAt, SortOrder.DESC).map { it ->
+        Works.selectAll().limit(count).orderBy(Works.id, SortOrder.DESC).map { it ->
             val id = it[Works.businessId]
             val title = it[Works.title]
             val description = it[Works.description]

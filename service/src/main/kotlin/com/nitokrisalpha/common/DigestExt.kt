@@ -6,6 +6,7 @@ import java.security.MessageDigest
 
 fun File.sha512(): String {
     if (!this.exists()) {
+        logger.error("file name is :{}", this.name)
         throw IllegalArgumentException("current file not exists")
     }
     val buffer = ByteArray(1024)

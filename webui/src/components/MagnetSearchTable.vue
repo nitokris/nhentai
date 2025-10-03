@@ -9,6 +9,8 @@ type SearchResult = {
   url: string;
   title: string;
   type: string;
+  size: string;
+  date: string;
   isDownloaded: string;
   [key: string]: string;
 };
@@ -41,6 +43,23 @@ const columns: QTableColumn[] = [
     label: '标题',
     align: 'left',
     field: (row: any) => row.title,
+    format: (val: any) => `${val}`,
+    sortable: true
+  }, {
+    name: 'size',
+    required: true,
+    label: '大小',
+    align: 'left',
+    field: (row: any) => row.size,
+    format: (val: any) => `${val}`,
+    sortable: true
+  }
+  , {
+    name: 'date',
+    required: true,
+    label: '时间',
+    align: 'left',
+    field: (row: any) => row.date,
     format: (val: any) => `${val}`,
     sortable: true
   }
@@ -190,6 +209,12 @@ function goBack() {
             </q-td>
             <q-td key="title" :props="props">
               <div v-html="props.row.title.replace(filter,`<span class='text-red'>${filter}</span>`)"></div>
+            </q-td>
+            <q-td key="size" :props="props">
+              <span>{{props.row.size}}</span>
+            </q-td>
+            <q-td key="date" :props="props">
+              <span>{{props.row.date}}</span>
             </q-td>
           </q-tr>
         </template>

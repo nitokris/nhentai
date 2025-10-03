@@ -33,7 +33,7 @@ class WorkController(
 
 
     @GetMapping("{id}")
-    fun workDetail(@PathVariable id: String): Work? {
+    fun workDetail(@PathVariable id: String): WorkDto? {
         val result = workService.findOne(id)
         return result
     }

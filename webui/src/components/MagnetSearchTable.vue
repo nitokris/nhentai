@@ -3,7 +3,7 @@ import {onMounted, ref} from 'vue';
 import {api} from 'boot/axios';
 import {useClipboard} from '@vueuse/core';
 import {QTableColumn} from "quasar";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 type SearchResult = {
   url: string;
@@ -133,16 +133,19 @@ function selectFast() {
 }
 
 const route = useRoute()
+const router = useRouter()
 const workId = route.params.workId
 
-
+function goBack() {
+  router.back()
+}
 </script>
 
 <template>
   <q-card>
     <template v-slot:default>
       <q-table ref="tableRef" :rows="rows" :columns="columns" v-model:selected="selected" selection="multiple"
-               row-key="magnet"
+               row-key="url"
                v-model:loading="loading"
                :fullscreen="false"
                class="my-sticky-header-table"
@@ -150,6 +153,8 @@ const workId = route.params.workId
                v-model:pagination="pagination" @request="onRequest">
 
         <template v-slot:top-left>
+          <q-btn v-if="workId!=null" flat round icon="close" @click="goBack"/>
+
           <q-btn color="primary" @click="copySelected">
             拷贝
           </q-btn>

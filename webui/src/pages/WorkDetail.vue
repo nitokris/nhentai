@@ -3,23 +3,21 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref} from "vue";
 import {api} from "boot/axios";
+import {QTableColumn} from "quasar";
 
 const router = useRouter();
 const route = useRoute();
 
 interface Work {
   id: number;
-  metaData: WorkMetaData,
-  isFavourite: boolean
-  isStar: boolean
-}
-
-interface WorkMetaData {
   title: string
   description: string
   resources: string[]
+  previews?: string[],
+  isFavourite: boolean
+  isStar: boolean,
+  magnets?: []
 
-  previews?: string[]
 }
 
 
@@ -57,6 +55,30 @@ const searchMagnet = function () {
   router.push({path: `/magnet/${route.params.id}`})
 }
 
+const tab = ref('magnets')
+
+const columns: QTableColumn[] = [
+
+  {
+    name: 'category',
+    required: true,
+    label: '类型',
+    align: 'left',
+    field: (row: any) => row.category,
+    format: (val: any) => `${val}`,
+    sortable: true
+  },
+  {
+    name: 'title',
+    required: true,
+    label: '标题',
+    align: 'left',
+    field: (row: any) => row.title,
+    format: (val: any) => `${val}`,
+    sortable: true
+  }
+];
+
 </script>
 
 <template>
@@ -69,7 +91,7 @@ const searchMagnet = function () {
             <q-btn flat round icon="close" @click="goBack"/>
             <q-item-section>
               <q-skeleton v-if="loading" type="text"></q-skeleton>
-              <div v-else class="text-h5 q-mt-sm q-mb-xs">{{ detail?.metaData.title }}</div>
+              <div v-else class="text-h5 q-mt-sm q-mb-xs">{{ detail?.title }}</div>
             </q-item-section>
           </q-item>
           <q-separator/>
@@ -82,14 +104,10 @@ const searchMagnet = function () {
                           :fullscreen="false" animated swipeable arrow thumbnails infinite>
                 <q-skeleton v-if="loading" type="text"></q-skeleton>
                 <q-carousel-slide v-else :name="index" v-bind:img-src="item"
-                                  v-for="(item,index) in detail?.metaData.previews"/>
+                                  v-for="(item,index) in detail?.previews"/>
               </q-carousel>
             </q-card-section>
             <q-card-section class="col-5" vertical>
-              <q-skeleton v-if="loading" type="text"></q-skeleton>
-              <q-card-section v-else class="text-bold" style="color: #141313"
-                              v-html="detail?.metaData.description"></q-card-section>
-              <q-separator/>
               <q-card-section class="relative-position" vertical>
                 <q-card-section>
                   <span class="text-bold">收藏</span>
@@ -109,6 +127,10 @@ const searchMagnet = function () {
                   <q-btn color="primary" @click="searchMagnet">磁链查找</q-btn>
                 </q-card-section>
               </q-card-section>
+              <q-separator/>
+              <q-skeleton v-if="loading" type="text"></q-skeleton>
+              <q-card-section v-else class="text-bold" style="color: #141313"
+                              v-html="detail?.description"></q-card-section>
               <q-card-section>
 
               </q-card-section>
@@ -116,6 +138,38 @@ const searchMagnet = function () {
           </q-card-section>
 
           <q-separator/>
+          <q-tabs
+            v-model="tab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+          >
+            <q-tab name="magnets" label="MAGNETS"/>
+          </q-tabs>
+          <q-separator/>
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="magnets">
+              <q-skeleton v-if="loading"/>
+              <div v-else>
+                <q-table flat hide-bottom
+                         :columns="columns" :rows="detail?.magnets"  row-key="url" :fullscreen="false" :pagination="{ rowsPerPage: 0 }">
+                  <template v-slot:body="props">
+                    <q-tr>
+                      <q-td key="category" :props="props">
+                        <q-img :src="'https://sukebei.nyaa.si/'+props.row.category"/>
+                      </q-td>
+                      <q-td key="title" :props="props">
+                        <span>{{props.row.title}}</span>
+                      </q-td>
+                    </q-tr>
+                  </template>
+                </q-table>
+              </div>
+            </q-tab-panel>
+
+          </q-tab-panels>
         </q-card>
       </div>
     </div>

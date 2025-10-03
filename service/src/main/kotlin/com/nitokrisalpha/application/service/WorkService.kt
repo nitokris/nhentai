@@ -68,8 +68,8 @@ class WorkService(
 
     }
 
-    fun findOne(id: String): Work? {
-        return workRepository.findById(WorkId(id))
+    fun findOne(id: String): WorkDto? {
+        return workQueryRepository.findById(WorkId(id))
     }
 
     @Transactional(rollbackFor = [Exception::class])

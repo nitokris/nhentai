@@ -41,9 +41,7 @@
     </q-drawer>
 
     <q-page-container>
-      <!--      <ComicRead/>-->
       <router-view/>
-      <!--            <WorkDetail/>-->
     </q-page-container>
   </q-layout>
 </template>
@@ -66,11 +64,6 @@ const linksList: EssentialLinkProps[] = [
     caption: '',
     icon: 'favorite',
     link: '/magnet'
-  }, {
-    title: 'detail',
-    caption: '',
-    icon: 'favorite',
-    link: '/detail'
   },
   {
     title: 'import',

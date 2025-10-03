@@ -3,6 +3,7 @@ package com.nitokrisalpha.infranstructure.jdbc
 import com.nitokrisalpha.application.dto.WorkDto
 import com.nitokrisalpha.domain.entity.Magnet
 import com.nitokrisalpha.domain.entity.MagnetMetaData
+import com.nitokrisalpha.domain.entity.Work
 import com.nitokrisalpha.domain.entity.WorkId
 import com.nitokrisalpha.infranstructure.jdbc.table.Magnets
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
@@ -43,7 +44,9 @@ class WorkQueryRepository {
                 val title = it[Works.title]
                 val description = it[Works.description]
                 val previews = it[Works.previews].split(",").filter { it.isNotEmpty() }
-
+                val actors = it[Works.actors]
+                val tags = it[Works.tags].split(",").filter { it.isNotEmpty() }
+                val circle = it[Works.circle]
                 val magnets =
                     Magnets.join(WorkMagnets, joinType = JoinType.INNER, Magnets.businessId, WorkMagnets.magnetId)
                         .select(Magnets.columns)
@@ -62,7 +65,10 @@ class WorkQueryRepository {
                     title = title,
                     description = description,
                     previews = previews,
-                    magnets = magnets
+                    magnets = magnets,
+                    actors = actors,
+                    tags = tags,
+                    circle = circle
                 )
             }
 

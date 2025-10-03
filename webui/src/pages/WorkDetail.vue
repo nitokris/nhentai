@@ -13,11 +13,13 @@ interface Work {
   title: string
   description: string
   resources: string[]
-  previews?: string[],
+  previews?: string[]
   isFavourite: boolean
-  isStar: boolean,
+  isStar: boolean
   magnets?: []
-
+  actors?: string
+  tags?: string[],
+  circle?: string
 }
 
 
@@ -110,6 +112,25 @@ const columns: QTableColumn[] = [
             <q-card-section class="col-5" vertical>
               <q-card-section class="relative-position" vertical>
                 <q-card-section>
+                  <q-skeleton v-if="loading" type="text"/>
+                  <template v-else>
+                    <div v-if="detail?.actors !==''" class="text-bold">
+                      <span>作者：</span><span>{{ detail?.actors }}</span>
+                    </div>
+                    <div v-if="detail?.circle !==''" class="text-bold">
+                      <span>社团：</span><span>{{ detail?.circle }}</span>
+                    </div>
+                    <div class="text-bold">
+                      <span>TAGS：</span>
+                      <q-chip v-for="(item,index) in detail?.tags" :key="index">
+                        {{ item }}
+                      </q-chip>
+                    </div>
+                  </template>
+
+
+                </q-card-section>
+                <q-card-section>
                   <span class="text-bold">收藏</span>
                   <q-btn flat icon="star" round outline></q-btn>
                 </q-card-section>
@@ -129,6 +150,8 @@ const columns: QTableColumn[] = [
               </q-card-section>
               <q-separator/>
               <q-card-section>
+                <!--                文件列表，采用按钮实现-->
+                <q-skeleton v-if="loading" type="QChip"/>
               </q-card-section>
             </q-card-section>
           </q-card-section>

@@ -41,7 +41,7 @@ class WorkService(
 
     fun saveNewWork(url: String): Unit {
         val urls = url.split("\n")
-        urls.reversed().forEach { url ->
+        urls.sorted().forEach { url ->
             val site = Site.fromUrl(url)
             val id = extractCid(url) ?: throw IllegalArgumentException("cant find cid")
             val workMetadataProvider: WorkMetaDataProvider = workMetadataProviderFactory.getProvider(site)

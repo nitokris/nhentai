@@ -31,7 +31,7 @@ const detail = ref<Work | null>(null)
 
 const loading = ref(true);
 
-api.get(`/api/work/${route.params.id }`).then(res => {
+api.get(`/api/work/${route.params.id}`).then(res => {
   console.log(res)
   detail.value = res.data
   console.log(detail.value)
@@ -52,6 +52,10 @@ const handleStar = async () => {
 const slide = ref(0)
 
 const score = ref(0)
+
+const searchMagnet = function () {
+  router.push({path: `/magnet/${route.params.id}`})
+}
 
 </script>
 
@@ -100,6 +104,9 @@ const score = ref(0)
                     icon="favorite"
                     max="5"
                   />
+                </q-card-section>
+                <q-card-section>
+                  <q-btn color="primary" @click="searchMagnet">磁链查找</q-btn>
                 </q-card-section>
               </q-card-section>
               <q-card-section>

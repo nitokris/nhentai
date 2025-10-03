@@ -3,9 +3,10 @@ import {onMounted, ref} from 'vue';
 import {api} from 'boot/axios';
 import {useClipboard} from '@vueuse/core';
 import {QTableColumn} from "quasar";
+import {useRoute} from "vue-router";
 
 type SearchResult = {
-  magnet: string;
+  url: string;
   title: string;
   type: string;
   isDownloaded: string;
@@ -69,14 +70,32 @@ async function copySelected() {
 }
 
 async function startdownload() {
-  const arr: string[] = [];
+  const arr: {}[] = [];
   selected.value.forEach(item => {
     // str += `${item.magnet}\n`;
-    arr.push(item.magnet);
-    item.isDownloaded = 'true';
+    arr.push({
+      title: item.title,
+      url: item.url,
+      size: item.size,
+      date: item.date,
+      category: item.category
+    });
   });
-  // console.log(str);
-  await api.post(`magnet`, arr);
+  console.log(arr);
+  await api.post(`/api/magnet`, {
+    magnetMetaData: arr
+  }).then(resp => {
+    if (resp.status === 200) {
+      console.log(resp.data)
+      const arr = []
+      resp.data.forEach((magnetId: object) => {
+        arr.push(magnetId[`id`])
+      })
+      api.put(`/api/work/${workId}/magnets`, arr).then(resp => {
+        console.log(resp.status)
+      })
+    }
+  })
   selected.value = [];
 }
 
@@ -85,6 +104,7 @@ const tableRef = ref();
 onMounted(() => {
   tableRef.value.requestServerInteraction();
 });
+
 
 const loading = ref(false);
 
@@ -111,6 +131,11 @@ function selectFast() {
     }
   });
 }
+
+const route = useRoute()
+const workId = route.params.workId
+
+
 </script>
 
 <template>

@@ -10,6 +10,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       {path: '/magnet', component: () => import('pages/MagnetPage.vue')},
+      {path: '/magnet/:workId', component: () => import('pages/MagnetPage.vue')},
       {path: '/recent', component: () => import('pages/RecentAdd.vue')},
       {path: '/detail/:id', component: () => import('pages/WorkDetail.vue')},
       {path: 'import', component: () => import('pages/MessageImport.vue')}

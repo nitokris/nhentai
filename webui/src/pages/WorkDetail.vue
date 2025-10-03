@@ -55,7 +55,7 @@ const searchMagnet = function () {
   router.push({path: `/magnet/${route.params.id}`})
 }
 
-const tab = ref('magnets')
+const tab = ref('description')
 
 const columns: QTableColumn[] = [
 
@@ -128,11 +128,7 @@ const columns: QTableColumn[] = [
                 </q-card-section>
               </q-card-section>
               <q-separator/>
-              <q-skeleton v-if="loading" type="text"></q-skeleton>
-              <q-card-section v-else class="text-bold" style="color: #141313"
-                              v-html="detail?.description"></q-card-section>
               <q-card-section>
-
               </q-card-section>
             </q-card-section>
           </q-card-section>
@@ -146,22 +142,31 @@ const columns: QTableColumn[] = [
             indicator-color="primary"
             align="left"
           >
+            <q-tab name="description" label="DESCRIPTION"/>
             <q-tab name="magnets" label="MAGNETS"/>
           </q-tabs>
           <q-separator/>
           <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="description">
+              <q-skeleton v-if="loading" type="text"></q-skeleton>
+              <div v-else class="text-bold" style="color: #141313"
+                   v-html="detail?.description">
+
+              </div>
+            </q-tab-panel>
             <q-tab-panel name="magnets">
               <q-skeleton v-if="loading"/>
               <div v-else>
                 <q-table flat hide-bottom
-                         :columns="columns" :rows="detail?.magnets"  row-key="url" :fullscreen="false" :pagination="{ rowsPerPage: 0 }">
+                         :columns="columns" :rows="detail?.magnets" row-key="url" :fullscreen="false"
+                         :pagination="{ rowsPerPage: 0 }">
                   <template v-slot:body="props">
                     <q-tr>
                       <q-td key="category" :props="props">
                         <q-img :src="'https://sukebei.nyaa.si/'+props.row.category"/>
                       </q-td>
                       <q-td key="title" :props="props">
-                        <span>{{props.row.title}}</span>
+                        <span>{{ props.row.title }}</span>
                       </q-td>
                     </q-tr>
                   </template>

@@ -55,9 +55,9 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.spring)
     implementation(libs.exposed.time)
+    implementation(libs.exposed.migration.jdbc)
 // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     implementation(libs.sqlite.jdbc)
-
 }
 
 kotlin {

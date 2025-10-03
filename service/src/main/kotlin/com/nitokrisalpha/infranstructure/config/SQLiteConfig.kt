@@ -3,7 +3,10 @@ package com.nitokrisalpha.infranstructure.config
 import com.nitokrisalpha.common.logger
 import org.jetbrains.exposed.v1.core.DatabaseConfig
 import org.jetbrains.exposed.v1.core.DatabaseConfig.Companion
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
+import org.springframework.boot.jdbc.SchemaManagement
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ByteArrayResource

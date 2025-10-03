@@ -3,6 +3,8 @@ package com.nitokrisalpha.application.service
 import com.nitokrisalpha.application.dto.WorkDto
 import com.nitokrisalpha.common.logger
 import com.nitokrisalpha.common.newId
+import com.nitokrisalpha.common.noSlashStr
+import com.nitokrisalpha.common.sha512
 import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
 import com.nitokrisalpha.domain.service.WorkMetaDataProvider
@@ -10,8 +12,13 @@ import com.nitokrisalpha.domain.specification.Specification
 import com.nitokrisalpha.infranstructure.jdbc.WorkQueryRepository
 import com.nitokrisalpha.infranstructure.jdbc.table.Works.site
 import com.nitokrisalpha.infranstructure.metadata.WorkMetadataProviderFactory
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FilenameUtils
+import org.springframework.boot.io.ApplicationResourceLoader
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.nio.file.Paths
+import java.util.UUID
 
 @Service
 class WorkService(
@@ -52,7 +59,7 @@ class WorkService(
             if (work != null) {
                 work.changeMetaData(metaData)
                 workRepository.save(work)
-                 work.id
+                work.id
             }
             work = Work(
                 id = newId(),
@@ -61,8 +68,8 @@ class WorkService(
             )
             try {
                 workRepository.save(work)
-            }catch (e: Exception){
-                logger.error("swallow exception,and message is:{}",e.message)
+            } catch (e: Exception) {
+                logger.error("swallow exception,and message is:{}", e.message)
             }
         }
 
@@ -94,6 +101,25 @@ class WorkService(
 
     fun recent(count: Int): Collection<WorkDto> {
         return workQueryRepository.recent(count)
+    }
+
+    fun bindFile(id: String, filePath: String) {
+        val file = Paths.get(filePath).toFile()
+        if (!file.exists()) {
+            logger.error("failed to bind :{} to work{}", filePath, id)
+            throw IllegalArgumentException("file not exists")
+        }
+        val work = workRepository.findById(WorkId(id))
+        if (work == null) {
+            logger.error("can't find work:{}", id)
+            throw IllegalArgumentException("can't find work:${id}")
+        }
+        val sha512 = file.sha512()
+        val noSlashStr = UUID.randomUUID().noSlashStr()
+        val ext = FilenameUtils.getExtension(file.name)
+        val workFile = WorkFile(sha512, "${noSlashStr}.${ext}", file.name, filePath)
+        work.addFile(workFile)
+        workRepository.save(work)
     }
 
     companion object DmmUtil {

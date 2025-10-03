@@ -3,12 +3,14 @@ package com.nitokrisalpha.infranstructure.jdbc
 import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
 import com.nitokrisalpha.domain.specification.Specification
+import com.nitokrisalpha.infranstructure.jdbc.table.WorkFiles
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
 import com.nitokrisalpha.infranstructure.jdbc.table.Works
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.notInList
 import org.jetbrains.exposed.v1.jdbc.batchInsert
+import org.jetbrains.exposed.v1.jdbc.batchUpsert
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -16,7 +18,7 @@ import org.jetbrains.exposed.v1.jdbc.upsert
 import org.springframework.stereotype.Component
 
 @Component
-class WorkRepositoryImpl: WorkRepository {
+class WorkRepositoryImpl : WorkRepository {
     override fun save(entity: Work) = transaction {
         val id = Works.upsert(Works.businessId, Works.site, Works.siteId) {
             it[businessId] = entity.id.value
@@ -40,6 +42,15 @@ class WorkRepositoryImpl: WorkRepository {
             WorkMagnets.batchInsert(data = entity.magnets, ignore = true) {
                 this[WorkMagnets.workId] = entity.id.value
                 this[WorkMagnets.magnetId] = it.value
+            }
+        }
+        if (entity.files.isNotEmpty()) {
+            WorkFiles.batchInsert(entity.files,ignore = true) {
+                this[WorkFiles.workId] = entity.id.value
+                this[WorkFiles.hash] = it.fileHash
+                this[WorkFiles.fileName] = it.fileName
+                this[WorkFiles.displayName] = it.displayName
+                this[WorkFiles.originalPath] = it.originalPath
             }
         }
         WorkId(id)

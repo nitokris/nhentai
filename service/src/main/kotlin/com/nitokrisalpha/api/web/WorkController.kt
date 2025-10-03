@@ -52,4 +52,10 @@ class WorkController(
     fun removeMagnets(@PathVariable id: String, @RequestBody magnets: Collection<String>) {
         workService.removeMagnets(id, magnets)
     }
+
+    @PostMapping("{id}/resource")
+    fun bindFileToWork(@PathVariable id: String, @RequestBody filePath: Map<String, String>) {
+        workService.bindFile(id, filePath["filePath"] as String)
+    }
+
 }

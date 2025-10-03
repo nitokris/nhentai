@@ -1,6 +1,7 @@
 package com.nitokrisalpha.domain.entity
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped
+import org.springframework.web.servlet.function.RouterFunctions.resources
 
 class Work(
     @get:JsonUnwrapped
@@ -13,6 +14,7 @@ class Work(
     private val _magnets: MutableCollection<MagnetId> = mutableSetOf()
     private val _resources: MutableCollection<Resource> = mutableSetOf()
     private var _metaData: WorkMetaData = metaData
+    private var _files: MutableCollection<WorkFile> = mutableListOf()
 
     init {
         _resources += resources
@@ -27,6 +29,9 @@ class Work(
 
     val resource: Collection<Resource>
         get() = _resources.toList()
+
+    val files: Collection<WorkFile>
+        get() = _files.toList()
 
 
     fun addNewMagnet(magnet: MagnetId) {
@@ -51,5 +56,12 @@ class Work(
 
     fun changeMetaData(metaData: WorkMetaData) {
         _metaData = metaData
+    }
+
+    fun addFile(workFile: WorkFile) {
+        val hasFile = _files.firstOrNull { it.fileHash == workFile.fileHash }
+        if (hasFile == null) {
+            _files += workFile
+        }
     }
 }

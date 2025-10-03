@@ -3,10 +3,15 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref} from "vue";
 import {api} from "boot/axios";
-import {QTableColumn} from "quasar";
+import {Notify, QTableColumn} from "quasar";
+import {rejects} from "node:assert";
 
 const router = useRouter();
 const route = useRoute();
+
+interface WorkFileInfo {
+  displayName: string
+}
 
 interface Work {
   id: number;
@@ -20,6 +25,7 @@ interface Work {
   actors?: string
   tags?: string[],
   circle?: string
+  files?: WorkFileInfo[]
 }
 
 
@@ -81,6 +87,41 @@ const columns: QTableColumn[] = [
   }
 ];
 
+const comicFile = ref('')
+
+const bindFile = function () {
+  if (comicFile.value.trim() == '') {
+    Notify.create({
+      type: 'warning',
+      message: '请输入正确的文件路径',
+      position: 'top',
+      timeout: 3000
+    })
+    return;
+  }
+  api.post(`/api/work/${route.params.id}/resource`, {filePath: comicFile.value}).then(res => {
+    console.log(res)
+    if (res.status != 200) {
+      Promise.reject(res.statusText)
+    } else {
+      Notify.create({
+        type: 'positive',
+        message: '操作成功',
+        position: 'top',
+        timeout: 3000
+      })
+    }
+  }).catch(err => {
+    Notify.create({
+      type: 'negative',
+      message: `后端报错：${err}`,
+      position: 'top',
+      timeout: 3000
+    })
+  })
+
+}
+
 </script>
 
 <template>
@@ -131,18 +172,20 @@ const columns: QTableColumn[] = [
 
                 </q-card-section>
                 <q-card-section>
-                  <span class="text-bold">收藏</span>
-                  <q-btn flat icon="star" round outline></q-btn>
-                </q-card-section>
-                <q-card-section>
-                  <span class="text-bold">评分 &nbsp;</span>
-                  <q-rating
-                    v-model="score"
-                    size="2em"
-                    color="red-7"
-                    icon="favorite"
-                    max="5"
-                  />
+                  <div>
+                    <span class="text-bold">收藏</span>
+                    <q-btn flat icon="star" round outline></q-btn>
+                  </div>
+                  <div>
+                    <span class="text-bold">评分 &nbsp;</span>
+                    <q-rating
+                      v-model="score"
+                      size="2em"
+                      color="red-7"
+                      icon="favorite"
+                      max="5"
+                    />
+                  </div>
                 </q-card-section>
                 <q-card-section>
                   <q-btn color="primary" @click="searchMagnet">磁链查找</q-btn>
@@ -152,6 +195,11 @@ const columns: QTableColumn[] = [
               <q-card-section>
                 <!--                文件列表，采用按钮实现-->
                 <q-skeleton v-if="loading" type="QChip"/>
+                <div v-else>
+                  <q-chip v-for="(item,index) in detail?.files" :key="index">
+                    {{ item.displayName }}
+                  </q-chip>
+                </div>
               </q-card-section>
             </q-card-section>
           </q-card-section>
@@ -167,6 +215,7 @@ const columns: QTableColumn[] = [
           >
             <q-tab name="description" label="DESCRIPTION"/>
             <q-tab name="magnets" label="MAGNETS"/>
+            <q-tab name="files" label="FILES"/>
           </q-tabs>
           <q-separator/>
           <q-tab-panels v-model="tab" animated>
@@ -196,7 +245,10 @@ const columns: QTableColumn[] = [
                 </q-table>
               </div>
             </q-tab-panel>
-
+            <q-tab-panel name="files">
+              <q-input v-model="comicFile" name="comicFilePath"/>
+              <q-btn type="button" color="primary" @click="bindFile">提交</q-btn>
+            </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>

@@ -11,6 +11,7 @@ data class WorkDto(
     val magnets: Collection<MagnetMetaData>? = null,
     val previews: Collection<String>? = null,
     val tags: Collection<String>? = null,
-    val circle: String? = null
+    val circle: String? = null,
+    val files: Collection<WorkFileDto>? = null
 ) {
 }

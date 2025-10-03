@@ -1,14 +1,13 @@
 package com.nitokrisalpha.infranstructure.jdbc
 
 import com.nitokrisalpha.application.dto.WorkDto
-import com.nitokrisalpha.domain.entity.Magnet
+import com.nitokrisalpha.application.dto.WorkFileDto
 import com.nitokrisalpha.domain.entity.MagnetMetaData
-import com.nitokrisalpha.domain.entity.Work
 import com.nitokrisalpha.domain.entity.WorkId
 import com.nitokrisalpha.infranstructure.jdbc.table.Magnets
+import com.nitokrisalpha.infranstructure.jdbc.table.WorkFiles
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
 import com.nitokrisalpha.infranstructure.jdbc.table.Works
-import org.apache.commons.lang3.CharSetUtils.count
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.SortOrder
 import org.jetbrains.exposed.v1.core.eq
@@ -59,7 +58,11 @@ class WorkQueryRepository {
                             val category = it[Magnets.category]
                             MagnetMetaData(title, url, size, date, category)
                         }
-
+                val workFiles = WorkFiles.selectAll()
+                    .where { WorkFiles.workId eq workId.value }
+                    .map {
+                        WorkFileDto(it[WorkFiles.displayName])
+                    }
                 WorkDto(
                     id = id,
                     title = title,
@@ -68,7 +71,8 @@ class WorkQueryRepository {
                     magnets = magnets,
                     actors = actors,
                     tags = tags,
-                    circle = circle
+                    circle = circle,
+                    files = workFiles
                 )
             }
 

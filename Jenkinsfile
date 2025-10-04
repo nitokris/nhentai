@@ -7,12 +7,6 @@ pipeline {
     }
 
     stages {
-		stage('Checkout') {
-			steps {
-				git branch: 'master', url: 'https://github.com/nitokris/nhentai.git'
-            }
-        }
-
         stage('Build & Push with Compose') {
 			steps {
 				withCredentials([usernamePassword(

@@ -1,13 +1,27 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
+import {useRoute} from "vue-router";
+import {api} from "boot/axios";
 
-const imgs = ref<string[]>([
-  'public/000.webp',
-  'public/001.webp',
-  'public/002.webp',
-  'public/003.webp',
-])
+const loading = ref(true)
+
+interface FileEntity {
+  fileName: string,
+  originalName: string,
+  readOrder: number
+}
+
+const imgs = ref<FileEntity[]>([])
+
+const route = useRoute()
+
+api.get(`/api/work/resource/${route.params.fileHash}`)
+  .then(resp => {
+    imgs.value = resp.data
+    console.log(resp.data)
+    loading.value = false
+  })
 
 const currentIndex = ref(0)
 
@@ -32,8 +46,10 @@ function nextImg() {
 
   <q-page padding tabindex="1" class="img-read-container" @keyup.left="prevImg" @keyup.right="nextImg">
     <div class="row">
-      <div class="col-8 offset-2">
-        <q-img class="img-hide" :class="currentIndex===index?'img-read':''" v-for="(item,index) in imgs" :src="item"
+      <q-skeleton v-if="loading"/>
+      <div v-else class="col-8 offset-2">
+        <q-img class="img-hide" :class="currentIndex===index?'img-read':''" v-for="(item,index) in imgs"
+               :src="`/static/${item.fileName}`"
                :key="index"></q-img>
       </div>
     </div>

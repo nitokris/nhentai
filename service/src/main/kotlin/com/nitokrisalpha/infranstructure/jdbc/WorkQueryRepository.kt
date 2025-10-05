@@ -61,7 +61,7 @@ class WorkQueryRepository {
                 val workFiles = WorkFiles.selectAll()
                     .where { WorkFiles.workId eq workId.value }
                     .map {
-                        WorkFileDto(it[WorkFiles.displayName])
+                        WorkFileDto(it[WorkFiles.displayName], it[WorkFiles.hash])
                     }
                 WorkDto(
                     id = id,

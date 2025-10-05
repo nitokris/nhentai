@@ -3,6 +3,7 @@ package com.nitokrisalpha.infranstructure.jdbc
 import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
 import com.nitokrisalpha.domain.specification.Specification
+import com.nitokrisalpha.infranstructure.jdbc.table.FileEntities
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkFiles
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
 import com.nitokrisalpha.infranstructure.jdbc.table.Works
@@ -45,12 +46,22 @@ class WorkRepositoryImpl : WorkRepository {
             }
         }
         if (entity.files.isNotEmpty()) {
-            WorkFiles.batchInsert(entity.files,ignore = true) {
+            WorkFiles.batchInsert(entity.files, ignore = true) {
                 this[WorkFiles.workId] = entity.id.value
                 this[WorkFiles.hash] = it.fileHash
                 this[WorkFiles.fileName] = it.fileName
                 this[WorkFiles.displayName] = it.displayName
                 this[WorkFiles.originalPath] = it.originalPath
+            }
+            for (file in entity.files) {
+                if (file.entities.isNotEmpty()) {
+                    FileEntities.batchInsert(file.entities, ignore = true) {
+                        this[FileEntities.fileHash] = file.fileHash
+                        this[FileEntities.fileName] = it.fileName
+                        this[FileEntities.originalFileName] = it.originalName
+                        this[FileEntities.readOrder] = it.readOrder
+                    }
+                }
             }
         }
         WorkId(id)

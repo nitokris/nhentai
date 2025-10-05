@@ -9,22 +9,29 @@ import com.nitokrisalpha.domain.entity.*
 import com.nitokrisalpha.domain.repository.WorkRepository
 import com.nitokrisalpha.domain.service.WorkMetaDataProvider
 import com.nitokrisalpha.domain.specification.Specification
+import com.nitokrisalpha.infranstructure.config.PathConfig
 import com.nitokrisalpha.infranstructure.jdbc.WorkQueryRepository
 import com.nitokrisalpha.infranstructure.jdbc.table.Works.site
 import com.nitokrisalpha.infranstructure.metadata.WorkMetadataProviderFactory
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.io.IOUtils
 import org.springframework.boot.io.ApplicationResourceLoader
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.nio.file.Paths
 import java.util.UUID
+import java.util.zip.ZipInputStream
 
 @Service
 class WorkService(
     private val workRepository: WorkRepository,
     private val workMetadataProviderFactory: WorkMetadataProviderFactory,
-    private val workQueryRepository: WorkQueryRepository
+    private val workQueryRepository: WorkQueryRepository,
+    private val pathConfig: PathConfig
 ) {
     @Transactional(rollbackFor = [Exception::class])
     fun saveNewWork(id: String, site: Site): WorkId {
@@ -103,6 +110,7 @@ class WorkService(
         return workQueryRepository.recent(count)
     }
 
+    @Transactional(rollbackFor = [Exception::class])
     fun bindFile(id: String, filePath: String) {
         val file = Paths.get(filePath).toFile()
         if (!file.exists()) {
@@ -117,7 +125,29 @@ class WorkService(
         val sha512 = file.sha512()
         val noSlashStr = UUID.randomUUID().noSlashStr()
         val ext = FilenameUtils.getExtension(file.name)
-        val workFile = WorkFile(sha512, "${noSlashStr}.${ext}", file.name, filePath)
+        val files = arrayListOf<FileEntity>()
+        var counter = 1
+        ZipInputStream(FileInputStream(file))
+            .use { zin ->
+                var entry = zin.nextEntry
+                while (entry != null) {
+                    if (!entry.isDirectory) {
+                        val originalFileName = entry.name
+                        val extension = FilenameUtils.getExtension(originalFileName)
+                        val fileName = "${UUID.randomUUID().noSlashStr()}.${extension}"
+                        val outFile = File(pathConfig.galleries, fileName)
+                        outFile.createNewFile()
+                        FileOutputStream(outFile)
+                            .use { fout ->
+                                IOUtils.copy(zin, fout)
+                            }
+                        val entity = FileEntity(fileName, originalFileName, counter++)
+                        files += entity
+                    }
+                    entry = zin.nextEntry
+                }
+            }
+        val workFile = WorkFile(sha512, "${noSlashStr}.${ext}", file.name, filePath, files)
         work.addFile(workFile)
         workRepository.save(work)
     }

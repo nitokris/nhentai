@@ -3,3 +3,6 @@ nhentai:
     proxy-enabled: true
     proxy-host: 127.0.0.1
     proxy-port: 7890
+  path:
+    files: ./static/files
+    galleries: ./static/galleries

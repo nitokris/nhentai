@@ -10,7 +10,8 @@ const router = useRouter();
 const route = useRoute();
 
 interface WorkFileInfo {
-  displayName: string
+  displayName: string,
+  fileHash: string
 }
 
 interface Work {
@@ -122,6 +123,11 @@ const bindFile = function () {
 
 }
 
+const readFile = function (fileId: string) {
+  console.log(fileId)
+  router.push({path: `/read/${fileId}`})
+}
+
 </script>
 
 <template>
@@ -196,7 +202,7 @@ const bindFile = function () {
                 <!--                文件列表，采用按钮实现-->
                 <q-skeleton v-if="loading" type="QChip"/>
                 <div v-else>
-                  <q-chip v-for="(item,index) in detail?.files" :key="index">
+                  <q-chip v-for="(item,index) in detail?.files" :key="index" @click="readFile(item.fileHash)" :clickable="true">
                     {{ item.displayName }}
                   </q-chip>
                 </div>

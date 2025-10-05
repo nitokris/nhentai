@@ -1,7 +1,9 @@
 package com.nitokrisalpha.api.web
 
 import com.nitokrisalpha.application.dto.WorkDto
+import com.nitokrisalpha.application.service.WorkQueryService
 import com.nitokrisalpha.application.service.WorkService
+import com.nitokrisalpha.domain.entity.FileEntity
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.Work
 import com.nitokrisalpha.domain.entity.WorkId
@@ -13,7 +15,8 @@ import org.springframework.web.servlet.function.RequestPredicates.param
 @RestController
 @RequestMapping("work")
 class WorkController(
-    val workService: WorkService
+    val workService: WorkService,
+    val workQueryService: WorkQueryService
 ) {
 
     @GetMapping("recent")
@@ -56,6 +59,13 @@ class WorkController(
     @PostMapping("{id}/resource")
     fun bindFileToWork(@PathVariable id: String, @RequestBody filePath: Map<String, String>) {
         workService.bindFile(id, filePath["filePath"] as String)
+    }
+
+    @GetMapping("resource/{resourceId}")
+    fun readWorkFile(
+        @PathVariable resourceId: String
+    ) : Collection<FileEntity> {
+        return workQueryService.readWork( resourceId)
     }
 
 }

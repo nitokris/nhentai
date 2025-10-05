@@ -40,9 +40,9 @@ function nextImg() {
 }
 
 const swap = function (e) {
-  if (e.direction == 'left') {
+  if (e.direction == 'right') {
     prevImg()
-  } else if (e.direction == 'right') {
+  } else if (e.direction == 'left') {
     nextImg()
   }
 }

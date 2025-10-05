@@ -39,6 +39,13 @@ function nextImg() {
   currentIndex.value = currentIndex.value + 1
 }
 
+const swap = function (e) {
+  if (e.direction == 'left') {
+    prevImg()
+  } else if (e.direction == 'right') {
+    nextImg()
+  }
+}
 
 </script>
 
@@ -50,6 +57,7 @@ function nextImg() {
       <div v-else class="col-8 offset-2">
         <q-img class="img-hide" :class="currentIndex===index?'img-read':''" v-for="(item,index) in imgs"
                :src="`/static/${item.fileName}`"
+               v-touch-pan="swap"
                :key="index"></q-img>
       </div>
     </div>

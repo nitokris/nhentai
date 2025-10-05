@@ -57,7 +57,7 @@ const swap = function (e) {
       <div v-else class="col-8 offset-2">
         <q-img class="img-hide" :class="currentIndex===index?'img-read':''" v-for="(item,index) in imgs"
                :src="`/static/${item.fileName}`"
-               v-touch-pan="swap"
+               v-touch-swipe.horizontal="swap"
                :key="index"></q-img>
       </div>
     </div>

@@ -54,7 +54,7 @@ const swap = function (e) {
   <q-page padding tabindex="1" class="img-read-container" @keyup.left="prevImg" @keyup.right="nextImg">
     <div class="row">
       <q-skeleton v-if="loading"/>
-      <div v-else class="col-lg-8 offset-lg-2 col-sm-12 offset-sm-0">
+      <div v-else class="col-lg-8 offset-lg-2 col-sm-12 offset-sm-0 col-xs-12 offset-xs-0 ">
         <q-img class="img-hide" :class="currentIndex===index?'img-read':''" v-for="(item,index) in imgs"
                :src="`/static/${item.fileName}`"
                v-touch-swipe.horizontal="swap"

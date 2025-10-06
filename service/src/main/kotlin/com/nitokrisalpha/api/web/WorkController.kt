@@ -3,6 +3,7 @@ package com.nitokrisalpha.api.web
 import com.nitokrisalpha.application.dto.WorkDto
 import com.nitokrisalpha.application.service.WorkQueryService
 import com.nitokrisalpha.application.service.WorkService
+import com.nitokrisalpha.common.PageResponse
 import com.nitokrisalpha.domain.entity.FileEntity
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.Work
@@ -22,6 +23,11 @@ class WorkController(
     @GetMapping("recent")
     fun recent(@RequestParam("count") count: Int): Collection<WorkDto> {
         return workService.recent(count)
+    }
+
+    @GetMapping
+    fun page(@RequestParam page: Int, @RequestParam pageSize: Int): PageResponse<WorkDto> {
+        return workQueryService.page(page, pageSize)
     }
 
     @PostMapping("new")
@@ -64,8 +70,8 @@ class WorkController(
     @GetMapping("resource/{resourceId}")
     fun readWorkFile(
         @PathVariable resourceId: String
-    ) : Collection<FileEntity> {
-        return workQueryService.readWork( resourceId)
+    ): Collection<FileEntity> {
+        return workQueryService.readWork(resourceId)
     }
 
 }

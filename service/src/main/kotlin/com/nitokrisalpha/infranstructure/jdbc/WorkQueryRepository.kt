@@ -2,8 +2,10 @@ package com.nitokrisalpha.infranstructure.jdbc
 
 import com.nitokrisalpha.application.dto.WorkDto
 import com.nitokrisalpha.application.dto.WorkFileDto
+import com.nitokrisalpha.common.PageResponse
 import com.nitokrisalpha.domain.entity.MagnetMetaData
 import com.nitokrisalpha.domain.entity.WorkId
+import com.nitokrisalpha.infranstructure.jdbc.adapter.paginate
 import com.nitokrisalpha.infranstructure.jdbc.table.Magnets
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkFiles
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
@@ -32,6 +34,25 @@ class WorkQueryRepository {
                 description = description,
                 cover = cover
             )
+        }
+    }
+
+    fun findByPage(page: Int, pageSize: Int): PageResponse<WorkDto> {
+        return transaction {
+            Works.selectAll()
+                .orderBy(column = Works.siteId, order = SortOrder.DESC)
+                .paginate(page, pageSize) {
+                    val id = it[Works.businessId]
+                    val title = it[Works.title]
+                    val description = it[Works.description]
+                    val cover = it[Works.previews].split(",").filter { it.isNotEmpty() }[0]
+                    WorkDto(
+                        id = id,
+                        title = title,
+                        description = description,
+                        cover = cover
+                    )
+                }
         }
     }
 

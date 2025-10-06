@@ -14,7 +14,8 @@ const routes: RouteRecordRaw[] = [
       {path: '/recent', component: () => import('pages/RecentAdd.vue')},
       {path: '/detail/:id', component: () => import('pages/WorkDetail.vue')},
       {path: '/import', component: () => import('pages/MessageImport.vue')},
-      {path: '/read/:fileHash', component: () => import ('pages/ComicRead.vue')}
+      {path: '/read/:fileHash', component: () => import ('pages/ComicRead.vue')},
+      {path: '/works', component: () => import('pages/WorkListPage.vue')}
     ]
   },
 

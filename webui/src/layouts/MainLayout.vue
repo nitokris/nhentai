@@ -60,6 +60,12 @@ const linksList: EssentialLinkProps[] = [
     link: '/recent'
   },
   {
+    title: 'works',
+    caption: 'work list',
+    icon: 'menu',
+    link:'/works'
+  },
+  {
     title: 'magnets',
     caption: '',
     icon: 'favorite',

@@ -127,14 +127,19 @@ const readFile = function (fileId: string) {
   console.log(fileId)
   router.push({path: `/read/${fileId}`})
 }
-
+const dialog = ref(false);       // 控制弹窗显示
+const selectedImage = ref('');   // 当前点击的大图
+const showImage = (src: string) => {
+  selectedImage.value = src;
+  dialog.value = true;
+};
 </script>
 
 <template>
 
   <q-page padding>
     <div class="row ">
-      <div class="col-10 offset-1">
+      <div class="col-8 offset-2">
         <q-card>
           <q-item>
             <q-btn flat round icon="close" @click="goBack"/>
@@ -146,14 +151,16 @@ const readFile = function (fileId: string) {
           <q-separator/>
           <q-card-section horizontal>
             <q-card-section class="col-6">
+              <q-skeleton v-if="loading" type="text"></q-skeleton>
 
-              <q-carousel v-model="slide"
+              <q-carousel v-else v-model="slide"
                           transition-next="slide-left"
                           transition-prev="slide-right"
                           :fullscreen="false" animated swipeable arrow thumbnails infinite>
-                <q-skeleton v-if="loading" type="text"></q-skeleton>
-                <q-carousel-slide v-else :name="index" v-bind:img-src="item"
-                                  v-for="(item,index) in detail?.previews"/>
+                <q-carousel-slide  :name="index" v-bind:img-src="item" style="width: 560px;height: 420px;"
+                                  v-for="(item,index) in detail?.previews">
+
+                </q-carousel-slide>
               </q-carousel>
             </q-card-section>
             <q-card-section class="col-5" vertical>
@@ -259,7 +266,20 @@ const readFile = function (fileId: string) {
         </q-card>
       </div>
     </div>
-
+    <!-- 弹出大图 -->
+    <q-dialog v-model="dialog" persistent no-backdrop-dismiss >
+      <q-card
+        class="bg-transparent shadow-none"
+        style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;"
+        @click="dialog = false"
+      >
+        <q-img
+          :src="selectedImage"
+          style="max-width: 90vw; max-height: 90vh;"
+          @click.stop
+        />
+      </q-card>
+    </q-dialog>
   </q-page>
 
 </template>

@@ -156,9 +156,9 @@ const showImage = (src: string) => {
                           transition-next="slide-left"
                           transition-prev="slide-right"
                           :fullscreen="false" animated swipeable arrows navigation thumbnails infinite>
-                <q-carousel-slide  :name="index" :img-src="item"
+                <q-carousel-slide :name="index" :img-src="item"
                                   v-for="(item,index) in detail?.previews">
-<!--                  <q-img :src="item" fit="scale-down"/>-->
+                  <!--                  <q-img :src="item" fit="scale-down"/>-->
                 </q-carousel-slide>
               </q-carousel>
             </q-card-section>
@@ -208,7 +208,8 @@ const showImage = (src: string) => {
                 <!--                文件列表，采用按钮实现-->
                 <q-skeleton v-if="loading" type="QChip"/>
                 <div v-else>
-                  <q-chip v-for="(item,index) in detail?.files" :key="index" @click="readFile(item.fileHash)" :clickable="true">
+                  <q-chip v-for="(item,index) in detail?.files" :key="index" @click="readFile(item.fileHash)"
+                          :clickable="true">
                     {{ item.displayName }}
                   </q-chip>
                 </div>
@@ -266,7 +267,7 @@ const showImage = (src: string) => {
       </div>
     </div>
     <!-- 弹出大图 -->
-    <q-dialog v-model="dialog" persistent no-backdrop-dismiss >
+    <q-dialog v-model="dialog" persistent no-backdrop-dismiss>
       <q-card
         class="bg-transparent shadow-none"
         style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;"
@@ -284,5 +285,9 @@ const showImage = (src: string) => {
 </template>
 
 <style scoped lang="sass">
+.q-carousel__slide
+  background-repeat: no-repeat
+  background-position: center center
+  background-size: contain
 
 </style>

@@ -41,16 +41,18 @@ class WorkQueryRepository {
         return transaction {
             Works.selectAll()
                 .orderBy(column = Works.siteId, order = SortOrder.DESC)
-                .paginate(page, pageSize) {
+                .paginate(page, pageSize) { it ->
                     val id = it[Works.businessId]
                     val title = it[Works.title]
                     val description = it[Works.description]
                     val cover = it[Works.previews].split(",").filter { it.isNotEmpty() }[0]
+                    val tags = it[Works.tags].split(",").filter { it.isNotEmpty() }
                     WorkDto(
                         id = id,
                         title = title,
                         description = description,
-                        cover = cover
+                        cover = cover,
+                        tags = tags
                     )
                 }
         }

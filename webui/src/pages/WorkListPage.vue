@@ -12,24 +12,20 @@ interface Work {
   title: string;
   description?: string;
   cover?: string;
+  tags?: string[];
 }
 
 const router = useRouter()
 const route = useRoute()
 
-const loading = ref(false)
+const loading = ref(true)
 
 const page = ref(Number(route.query.page || 1))
 const size = ref(Number(route.query.size || 20))
 const totalPage = ref(0)
 
 
-const works = ref<Work[]>([
-  {
-    id: '1',
-    title: '233'
-  }
-])
+const works = ref<Work[]>([])
 
 onMounted(() => {
   if (!route.query.page) {
@@ -39,9 +35,11 @@ onMounted(() => {
         const q = JSON.parse(saved);
         if (q.page) {
           // 将 saved 的 query 写回 URL（不产生额外历史）
-          router.replace({ path: route.path, query: q }).catch(()=>{});
+          router.replace({path: route.path, query: q}).catch(() => {
+          });
         }
-      } catch (e) { /* ignore */ }
+      } catch (e) { /* ignore */
+      }
     }
   }
   api.get(`/api/work?page=${page.value}&pageSize=${size.value}`)
@@ -52,10 +50,13 @@ onMounted(() => {
       console.log(data)
       console.log(pagination)
       works.value = data
-    })
+    }).finally(() => {
+    loading.value = false
+  })
 })
 
 const pageChange = (newPage: number) => {
+  loading.value = true
   router.replace({
     query: {
       ...route.query,
@@ -71,7 +72,9 @@ const pageChange = (newPage: number) => {
       works.value = data
       const el = document.scrollingElement || document.documentElement
       setVerticalScrollPosition(el, 0, 300) // 300ms 平滑滚动到顶部
-    })
+    }).finally(() => {
+    loading.value = false
+  })
 }
 
 const toWorkDetail = (id: string) => {
@@ -95,9 +98,14 @@ const toWorkDetail = (id: string) => {
             <q-card-section slot="title">
               {{ item.title }}
             </q-card-section>
+            <q-card-section>
+              <q-chip v-for="(tag,index) in item.tags" :key="index">
+                {{tag}}
+              </q-chip>
+            </q-card-section>
           </q-card>
         </div>
-        <div class="flex flex-center col-12">
+        <div class="pagination-footer">
           <q-pagination :max="totalPage" :model-value="page" @update:model-value="pageChange"/>
         </div>
       </div>
@@ -108,5 +116,16 @@ const toWorkDetail = (id: string) => {
 </template>
 
 <style scoped lang="sass">
+.pagination-footer
+  position: fixed
+  bottom: 0
+  left: 0
+  width: 100%
+  background: white
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05)
+  padding: 8px 0
+  display: flex
+  justify-content: center
+  z-index: 1000
 
 </style>

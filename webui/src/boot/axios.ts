@@ -17,7 +17,7 @@ declare module 'vue' {
 
 const { protocol, hostname, port } = window.location;
 
-const apiBaseUrl = `${protocol}//${hostname}:${port ?? 80}/api`; // 自动使用当前访问的域名或IP
+const apiBaseUrl = `${protocol}//${hostname}:${port ?? 80}/`; // 自动使用当前访问的域名或IP
 // import.meta.env.VITE_API_BASE_URL
 const api = axios.create({ baseURL:  apiBaseUrl});
 console.log('baseURL:', import.meta.env.VITE_API_BASE_URL);

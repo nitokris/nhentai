@@ -86,10 +86,10 @@ const toWorkDetail = (id: string) => {
 
 <template>
 
-  <q-page padding>
+  <q-page padding class="page-with-footer">
     <q-skeleton v-if="loading"/>
     <template v-else>
-      <div class="row">
+      <div class="row q-col-gutter-md">
         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3" v-for="(item,index) in works" :key="index">
           <q-card @click="toWorkDetail(item.id)">
             <q-card-section>
@@ -100,7 +100,7 @@ const toWorkDetail = (id: string) => {
             </q-card-section>
             <q-card-section>
               <q-chip v-for="(tag,index) in item.tags" :key="index">
-                {{tag}}
+                {{ tag }}
               </q-chip>
             </q-card-section>
           </q-card>
@@ -116,6 +116,10 @@ const toWorkDetail = (id: string) => {
 </template>
 
 <style scoped lang="sass">
+.page-with-footer
+  /* 关键：为分页预留高度空间，防止最后一行被挡 */
+  padding-bottom: 72px
+
 .pagination-footer
   position: fixed
   bottom: 0

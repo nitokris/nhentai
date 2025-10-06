@@ -155,10 +155,10 @@ const showImage = (src: string) => {
               <q-carousel v-else v-model="slide"
                           transition-next="slide-left"
                           transition-prev="slide-right"
-                          :fullscreen="false" animated swipeable arrows navigation infinite>
-                <q-carousel-slide  :name="index"
+                          :fullscreen="false" animated swipeable arrows navigation thumbnails infinite>
+                <q-carousel-slide  :name="index" :img-src="item"
                                   v-for="(item,index) in detail?.previews">
-                  <q-img :src="item" fit="scale-down"/>
+<!--                  <q-img :src="item" fit="scale-down"/>-->
                 </q-carousel-slide>
               </q-carousel>
             </q-card-section>

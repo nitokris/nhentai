@@ -158,7 +158,7 @@ const showImage = (src: string) => {
                           :fullscreen="false" animated swipeable arrows navigation infinite>
                 <q-carousel-slide  :name="index"
                                   v-for="(item,index) in detail?.previews">
-                  <q-img :src="item" fit="contain"/>
+                  <q-img :src="item" fit="scale-down"/>
                 </q-carousel-slide>
               </q-carousel>
             </q-card-section>

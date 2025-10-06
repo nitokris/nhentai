@@ -96,8 +96,9 @@ const toWorkDetail = (id: string) => {
               <q-img :src="item.cover"/>
             </q-card-section>
             <q-card-section slot="title">
-              {{ item.title }}
+              <span class="title">{{ item.title }}</span>
             </q-card-section>
+            <q-separator/>
             <q-card-section>
               <q-chip v-for="(tag,index) in item.tags" :key="index">
                 {{ tag }}
@@ -116,6 +117,8 @@ const toWorkDetail = (id: string) => {
 </template>
 
 <style scoped lang="sass">
+.title
+  font-weight: bold
 .page-with-footer
   /* 关键：为分页预留高度空间，防止最后一行被挡 */
   padding-bottom: 72px

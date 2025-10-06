@@ -21,13 +21,26 @@ const route = useRoute()
 const loading = ref(true)
 
 const page = ref(Number(route.query.page || 1))
-const size = ref(Number(route.query.size || 20))
+const size = ref(Number(route.query.size || 30))
+const options = [
+  {
+    value: 'recordDate',
+    label: '录入时间'
+  }, {
+    value: 'publishDate',
+    label: '发售时间'
+  }
+]
+const sort = ref(route.query.sort || options[0].value)
 const totalPage = ref(0)
 
 
 const works = ref<Work[]>([])
 
-onMounted(() => {
+function loadData() {
+  loading.value = true
+  console.log(sort.value)
+  debugger
   if (!route.query.page) {
     const saved = sessionStorage.getItem('work_list_query');
     if (saved) {
@@ -42,7 +55,7 @@ onMounted(() => {
       }
     }
   }
-  api.get(`/api/work?page=${page.value}&pageSize=${size.value}`)
+  api.get(`/api/work?page=${page.value}&pageSize=${size.value}&sort=${sort.value}`)
     .then(resp => {
       const {data, pagination} = resp.data
       page.value = pagination.page
@@ -53,33 +66,43 @@ onMounted(() => {
     }).finally(() => {
     loading.value = false
   })
+}
+
+onMounted(() => {
+  loadData();
 })
 
 const pageChange = (newPage: number) => {
-  loading.value = true
+  page.value = newPage
   router.replace({
     query: {
       ...route.query,
       page: newPage,
-      size: size.value
+      size: size.value,
+      sort: sort.value
     }
   })
-  api.get(`/api/work?page=${newPage}&pageSize=20`)
-    .then(resp => {
-      const {data, pagination} = resp.data
-      page.value = pagination.page
-      totalPage.value = pagination.totalPage
-      works.value = data
-      const el = document.scrollingElement || document.documentElement
-      setVerticalScrollPosition(el, 0, 300) // 300ms 平滑滚动到顶部
-    }).finally(() => {
-    loading.value = false
-  })
+  loadData()
 }
 
 const toWorkDetail = (id: string) => {
+  debugger
   sessionStorage.setItem('work_list_query', JSON.stringify(route.query));
   router.push({path: `/detail/${id}`})
+}
+
+
+const change = function () {
+  page.value = 1
+  router.replace({
+    query: {
+      ...route.query,
+      page: page.value,
+      size: size.value,
+      sort: sort.value
+    }
+  })
+  loadData()
 }
 
 </script>
@@ -89,12 +112,16 @@ const toWorkDetail = (id: string) => {
   <q-page padding class="page-with-footer">
     <q-skeleton v-if="loading"/>
     <template v-else>
-      <div class="row q-col-gutter-md">
-        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-3" v-for="(item,index) in works" :key="index">
-          <q-card @click="toWorkDetail(item.id)">
-            <q-card-section>
-              <q-img :src="item.cover"/>
-            </q-card-section>
+      <div class="row justify-between q-mb-md q-mr-sm">
+        <q-select rounded outlined v-model="sort" :options="options" label="排序" emit-value map-options
+                  @update:model-value="change"/>
+        <q-btn-group>
+        </q-btn-group>
+      </div>
+      <div class="row row q-col-gutter-x-sm q-col-gutter-y-lg">
+        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 col-xl-2" v-for="(item,index) in works" :key="index">
+          <q-card @click="toWorkDetail(item.id)" class="fit">
+            <q-img :src="item.cover"/>
             <q-card-section slot="title">
               <span class="title">{{ item.title }}</span>
             </q-card-section>
@@ -119,9 +146,13 @@ const toWorkDetail = (id: string) => {
 <style scoped lang="sass">
 .title
   font-weight: bold
+
 .page-with-footer
   /* 关键：为分页预留高度空间，防止最后一行被挡 */
   padding-bottom: 72px
+
+.page-with-header
+  padding-top: 72px
 
 .pagination-footer
   position: fixed

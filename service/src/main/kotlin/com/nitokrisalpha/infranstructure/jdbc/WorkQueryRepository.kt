@@ -10,8 +10,10 @@ import com.nitokrisalpha.infranstructure.jdbc.table.Magnets
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkFiles
 import com.nitokrisalpha.infranstructure.jdbc.table.WorkMagnets
 import com.nitokrisalpha.infranstructure.jdbc.table.Works
+import org.jetbrains.exposed.v1.core.Column
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.SortOrder
+import org.jetbrains.exposed.v1.core.Table
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.selectAll
@@ -37,10 +39,19 @@ class WorkQueryRepository {
         }
     }
 
-    fun findByPage(page: Int, pageSize: Int): PageResponse<WorkDto> {
+    fun findByPage(page: Int, pageSize: Int, sort: String): PageResponse<WorkDto> {
+
+        fun toColumn(str: String): Column<*> {
+            return when (str) {
+                "recordDate" -> Works.id
+                "publishDate" -> Works.siteId
+                else -> Works.id
+            }
+        }
+
         return transaction {
             Works.selectAll()
-                .orderBy(column = Works.siteId, order = SortOrder.DESC)
+                .orderBy(column = toColumn(sort), order = SortOrder.DESC)
                 .paginate(page, pageSize) { it ->
                     val id = it[Works.businessId]
                     val title = it[Works.title]
@@ -57,6 +68,7 @@ class WorkQueryRepository {
                 }
         }
     }
+
 
     fun findById(workId: WorkId): WorkDto? = transaction {
         Works.selectAll().where { Works.businessId eq workId.value }

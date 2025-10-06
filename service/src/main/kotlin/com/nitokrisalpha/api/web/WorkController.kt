@@ -26,8 +26,8 @@ class WorkController(
     }
 
     @GetMapping
-    fun page(@RequestParam page: Int, @RequestParam pageSize: Int): PageResponse<WorkDto> {
-        return workQueryService.page(page, pageSize)
+    fun page(@RequestParam page: Int, @RequestParam pageSize: Int, @RequestParam sort: String): PageResponse<WorkDto> {
+        return workQueryService.page(page, pageSize,sort)
     }
 
     @PostMapping("new")

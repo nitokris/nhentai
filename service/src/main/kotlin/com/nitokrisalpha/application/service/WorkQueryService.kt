@@ -27,8 +27,8 @@ class WorkQueryService(
 
     }
 
-    fun page(page: Int, pageSize: Int): PageResponse<WorkDto> {
-        return workQueryRepository.findByPage(page, pageSize)
+    fun page(page: Int, pageSize: Int,sort: String): PageResponse<WorkDto> {
+        return workQueryRepository.findByPage(page, pageSize,sort)
     }
 
 }

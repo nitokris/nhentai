@@ -151,15 +151,14 @@ const showImage = (src: string) => {
           <q-separator/>
           <q-card-section horizontal>
             <q-card-section class="col-6">
-              <q-skeleton v-if="loading" type="text"></q-skeleton>
-
+              <q-skeleton v-if="loading" type="QSlider"></q-skeleton>
               <q-carousel v-else v-model="slide"
                           transition-next="slide-left"
                           transition-prev="slide-right"
-                          :fullscreen="false" animated swipeable arrow thumbnails infinite>
-                <q-carousel-slide  :name="index" v-bind:img-src="item" style="width: 560px;height: 420px;"
+                          :fullscreen="false" animated swipeable arrows navigation infinite>
+                <q-carousel-slide  :name="index"
                                   v-for="(item,index) in detail?.previews">
-
+                  <q-img :src="item" fit="contain"/>
                 </q-carousel-slide>
               </q-carousel>
             </q-card-section>

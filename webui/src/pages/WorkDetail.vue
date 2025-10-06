@@ -139,7 +139,7 @@ const showImage = (src: string) => {
 
   <q-page padding>
     <div class="row ">
-      <div class="col-8 offset-2">
+      <div class="col-10 offset-1">
         <q-card>
           <q-item>
             <q-btn flat round icon="close" @click="goBack"/>

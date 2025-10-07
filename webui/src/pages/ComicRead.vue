@@ -56,6 +56,8 @@ function back() {
   router.back()
 }
 
+const server = api.defaults.baseURL
+
 </script>
 
 <template>
@@ -65,7 +67,7 @@ function back() {
       <q-skeleton v-if="loading"/>
       <div v-else class="col-lg-8 offset-lg-2 col-sm-12 offset-sm-0 col-xs-12 offset-xs-0 ">
         <q-img v-for="(item,index) in imgs"
-               :src="`/static/${item.fileName}`"
+               :src="`${server}static/galleries/${item.fileName}`"
                :key="index"></q-img>
       </div>
     </div>

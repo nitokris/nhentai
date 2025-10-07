@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.charset.Charset
 import java.nio.file.Paths
 import java.util.UUID
 import java.util.zip.ZipInputStream
@@ -110,13 +111,21 @@ class WorkService(
         return workQueryRepository.recent(count)
     }
 
+
+    private fun safeFile(path: String): File {
+        val file = Paths.get(path).toFile()
+        if (file.exists()) return file
+
+        // 尝试UTF-8修正
+        val fixed = File(String(path.toByteArray(Charsets.UTF_8), Charset.defaultCharset()))
+        if (fixed.exists()) return fixed
+
+        throw IllegalArgumentException("File not exists: $path")
+    }
+
     @Transactional(rollbackFor = [Exception::class])
     fun bindFile(id: String, filePath: String, displayName: String) {
-        val file = Paths.get(filePath).toFile()
-        if (!file.exists()) {
-            logger.error("failed to bind :{} to work{}", filePath, id)
-            throw IllegalArgumentException("file not exists")
-        }
+        val file = safeFile(filePath)
         val work = workRepository.findById(WorkId(id))
         if (work == null) {
             logger.error("can't find work:{}", id)

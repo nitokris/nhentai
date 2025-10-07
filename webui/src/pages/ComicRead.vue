@@ -52,15 +52,7 @@ const swap = function (e) {
 const fabPos = ref([18, 18])
 const draggingFab = ref(false)
 
-function moveFab(ev) {
-  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
-  fabPos.value = [
-    fabPos.value[0] - ev.delta.x,
-    fabPos.value[1] - ev.delta.y
-  ]
-}
-
-function back(){
+function back() {
   router.back()
 }
 
@@ -83,7 +75,6 @@ function back(){
         direction="up"
         color="accent"
         :disable="draggingFab"
-        v-touch-pan.prevent.mouse="moveFab"
         @click="back"
       >
       </q-fab>

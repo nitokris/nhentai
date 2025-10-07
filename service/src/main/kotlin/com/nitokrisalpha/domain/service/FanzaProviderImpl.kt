@@ -5,14 +5,24 @@ import com.fleeksoft.ksoup.select.Elements
 import com.nitokrisalpha.common.logger
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.WorkMetaData
+import com.nitokrisalpha.infranstructure.config.PathConfig
+import io.undertow.util.URLUtils
+import org.apache.commons.io.IOUtils
+import org.apache.hc.client5.http.utils.URIUtils
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Uri
+import org.http4k.lens.string
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.module.Configuration
 
 
 class FanzaProviderImpl(
     private val client: HttpHandler,
-    override val site: Site = Site.FANZA
+    override val site: Site = Site.FANZA,
+    private val pathConfig: PathConfig
 ) : WorkMetaDataProvider {
 
 
@@ -54,6 +64,10 @@ class FanzaProviderImpl(
             return request
         }
 
+        private fun getImgRequest(url: String): Request {
+            return Request(Method.GET, url)
+        }
+
         private fun Elements.findInfo(infoColumn: String): String {
             val item = this.filter({ it.select(".informationList__ttl").text() == infoColumn })
             if (item.isNotEmpty()) {
@@ -73,6 +87,10 @@ class FanzaProviderImpl(
         private fun Elements.ownText(): String {
             return this.joinToString(" ") { it.ownText() }.trim()
         }
+
+        private fun Uri.getFileName(): String {
+            return this.path.substringAfterLast("/")
+        }
     }
 
     override fun fetchMetaData(id: String): WorkMetaData {
@@ -91,21 +109,49 @@ class FanzaProviderImpl(
             val finalUpdateDate = items.findInfo("最終更新日")
             val tagHtmlTags = items.findElements("ジャンル", "a.genreTag__txt")
             val tags = tagHtmlTags.eachText()
+            val mapping = downloadAndReplacePreviews(previews)
+            val replacedPaths = mutableListOf<String>()
+            for (str in previews) {
+                replacedPaths += if (mapping.containsKey(str)) {
+                    mapping[str] as String
+                } else {
+                    str
+                }
+            }
             return WorkMetaData(
                 title = title,
                 description = description,
-                previews = previews,
+                previews = replacedPaths,
                 releaseDate = releaseDate,
                 finalUpdateDate = finalUpdateDate,
                 tags = tags,
                 actors = listOf(author),
                 circle = circle,
-
-                )
+            )
         }
         logger.error("failed to fetch metadata from fanza for id: $id,http status: ${response.status}")
         throw RuntimeException("failed to fetch metadata from fanza for id: $id")
     }
 
+    private fun downloadAndReplacePreviews(previews: List<String>): Map<String, String> {
+        val result = mutableMapOf<String, String>()
+        val rootPath = pathConfig.previews.replace("/app", "")
+        for (preview in previews) {
+            val fileName = Uri.of(preview).getFileName()
+            val request = getImgRequest(preview)
+            val resp = client(request)
+            resp.use { it ->
+                if (it.status.successful) {
+                    val file = File(pathConfig.previews, fileName)
+                    file.createNewFile()
+                    FileOutputStream(file).use { out ->
+                        IOUtils.copy(it.body.stream, out)
+                        result[preview] = "${rootPath}/${fileName}"
+                    }
+                }
+            }
+        }
+        return result
+    }
 
 }

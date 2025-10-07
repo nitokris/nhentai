@@ -14,4 +14,5 @@ data class WorkDto(
     val circle: String? = null,
     val files: Collection<WorkFileDto>? = null
 ) {
+
 }

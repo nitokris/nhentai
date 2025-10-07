@@ -3,6 +3,7 @@ package com.nitokrisalpha.infranstructure.metadata
 import com.nitokrisalpha.domain.service.DLSiteProviderImpl
 import com.nitokrisalpha.domain.service.FanzaProviderImpl
 import com.nitokrisalpha.domain.service.MelonBooksProvider
+import com.nitokrisalpha.infranstructure.config.PathConfig
 import org.http4k.core.HttpHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,7 +13,7 @@ class WorkMetadataProviderConfig {
 
 
     @Bean
-    fun fanzaProvider(handler: HttpHandler) = FanzaProviderImpl(handler)
+    fun fanzaProvider(handler: HttpHandler, config: PathConfig) = FanzaProviderImpl(handler, pathConfig = config)
 
     @Bean
     fun dlSiteProvider(handler: HttpHandler) = DLSiteProviderImpl(handler)

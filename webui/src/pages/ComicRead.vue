@@ -79,7 +79,7 @@ function back(){
     </div>
     <q-page-sticky position="bottom-right" :offset="fabPos">
       <q-fab
-        icon="material-icons-outlined"
+        icon="reply"
         direction="up"
         color="accent"
         :disable="draggingFab"

@@ -9,6 +9,7 @@ object WorkFiles : Table() {
     val fileName = text("fileName")
     val displayName = text("displayName")
     val originalPath = text("originalPath")
+    val originalName = text("originalName")
     val needProcess = bool("needProcess").default(true)
     val processStatus = varchar("processStatus", 255).default("")
     override val primaryKey = PrimaryKey(hash, name = "work_file_hash")

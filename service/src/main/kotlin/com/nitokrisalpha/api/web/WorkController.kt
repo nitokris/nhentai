@@ -27,7 +27,7 @@ class WorkController(
 
     @GetMapping
     fun page(@RequestParam page: Int, @RequestParam pageSize: Int, @RequestParam sort: String): PageResponse<WorkDto> {
-        return workQueryService.page(page, pageSize,sort)
+        return workQueryService.page(page, pageSize, sort)
     }
 
     @PostMapping("new")
@@ -64,7 +64,7 @@ class WorkController(
 
     @PostMapping("{id}/resource")
     fun bindFileToWork(@PathVariable id: String, @RequestBody filePath: Map<String, String>) {
-        workService.bindFile(id, filePath["filePath"] as String)
+        workService.bindFile(id, filePath["filePath"] as String, filePath["originalName"] as String)
     }
 
     @GetMapping("resource/{resourceId}")

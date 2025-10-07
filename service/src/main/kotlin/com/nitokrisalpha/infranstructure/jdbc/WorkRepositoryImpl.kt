@@ -52,6 +52,7 @@ class WorkRepositoryImpl : WorkRepository {
                 this[WorkFiles.fileName] = it.fileName
                 this[WorkFiles.displayName] = it.displayName
                 this[WorkFiles.originalPath] = it.originalPath
+                this[WorkFiles.originalName] = it.originalName
             }
             for (file in entity.files) {
                 if (file.entities.isNotEmpty()) {

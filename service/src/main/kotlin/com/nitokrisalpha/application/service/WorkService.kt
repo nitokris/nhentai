@@ -111,7 +111,7 @@ class WorkService(
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    fun bindFile(id: String, filePath: String) {
+    fun bindFile(id: String, filePath: String, displayName: String) {
         val file = Paths.get(filePath).toFile()
         if (!file.exists()) {
             logger.error("failed to bind :{} to work{}", filePath, id)
@@ -147,7 +147,7 @@ class WorkService(
                     entry = zin.nextEntry
                 }
             }
-        val workFile = WorkFile(sha512, "${noSlashStr}.${ext}", file.name, filePath, files)
+        val workFile = WorkFile(sha512, "${noSlashStr}.${ext}", displayName, filePath, file.name, files)
         work.addFile(workFile)
         workRepository.save(work)
     }

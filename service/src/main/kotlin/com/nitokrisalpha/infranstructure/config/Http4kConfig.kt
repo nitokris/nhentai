@@ -17,18 +17,11 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
 
 @ConfigurationProperties(prefix = "nhentai.http4k")
-class Http4kConfigProperties {
-    val proxyHost: String
-    val proxyPort: Int
+data class Http4kConfigProperties(
+    val proxyHost: String,
+    val proxyPort: Int,
     val proxyEnabled: Boolean
-
-    @ConstructorBinding
-    constructor(proxyHost: String, proxyPort: Int, proxyEnabled: Boolean) {
-        this.proxyHost = proxyHost
-        this.proxyPort = proxyPort
-        this.proxyEnabled = proxyEnabled
-    }
-}
+)
 
 @Configuration
 @ConditionalOnClass(value = [ApacheClient::class])

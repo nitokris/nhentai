@@ -18,9 +18,8 @@ class MagnetService(
 ) {
     @Transactional(rollbackFor = [Exception::class])
     fun recordMagnets(command: MagnetRecordCommand): Collection<MagnetId> {
-
         val magnets = command.magnetMetaData.map {
-            Magnet(newId(), it)
+            Magnet(MagnetId.newId(it.url), it)
         }
         return magnetRepository.save(magnets = magnets)
     }

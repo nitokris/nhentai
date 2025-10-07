@@ -1,10 +1,12 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {api} from "boot/axios";
 
 const loading = ref(true)
+
+const router = useRouter()
 
 interface FileEntity {
   fileName: string,
@@ -47,6 +49,21 @@ const swap = function (e) {
   }
 }
 
+const fabPos = ref([18, 18])
+const draggingFab = ref(false)
+
+function moveFab(ev) {
+  draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
+  fabPos.value = [
+    fabPos.value[0] - ev.delta.x,
+    fabPos.value[1] - ev.delta.y
+  ]
+}
+
+function back(){
+  router.back()
+}
+
 </script>
 
 <template>
@@ -55,11 +72,22 @@ const swap = function (e) {
     <div class="row">
       <q-skeleton v-if="loading"/>
       <div v-else class="col-lg-8 offset-lg-2 col-sm-12 offset-sm-0 col-xs-12 offset-xs-0 ">
-        <q-img  v-for="(item,index) in imgs"
+        <q-img v-for="(item,index) in imgs"
                :src="`/static/${item.fileName}`"
                :key="index"></q-img>
       </div>
     </div>
+    <q-page-sticky position="bottom-right" :offset="fabPos">
+      <q-fab
+        icon="material-icons-outlined"
+        direction="up"
+        color="accent"
+        :disable="draggingFab"
+        v-touch-pan.prevent.mouse="moveFab"
+        @click="back"
+      >
+      </q-fab>
+    </q-page-sticky>
   </q-page>
 
 </template>

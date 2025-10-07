@@ -64,7 +64,7 @@ class WorkController(
 
     @PostMapping("{id}/resource")
     fun bindFileToWork(@PathVariable id: String, @RequestBody filePath: Map<String, String>) {
-        workService.bindFile(id, filePath["filePath"] as String, filePath["displayName"] as String)
+        workService.bindFile(id, filePath["filePath"] as String, filePath["originalName"] as String)
     }
 
     @GetMapping("resource/{resourceId}")

@@ -2,9 +2,8 @@
 
 import {onMounted, ref} from "vue";
 import {api} from "boot/axios";
-import {scroll} from "quasar";
-import setVerticalScrollPosition = scroll.setVerticalScrollPosition;
 import {useRoute, useRouter} from "vue-router";
+import WorkListItem from "pages/WorkListItem.vue";
 
 
 interface Work {
@@ -85,12 +84,6 @@ const pageChange = (newPage: number) => {
   loadData()
 }
 
-const toWorkDetail = (id: string) => {
-  debugger
-  sessionStorage.setItem('work_list_query', JSON.stringify(route.query));
-  router.push({path: `/detail/${id}`})
-}
-
 
 const change = function () {
   page.value = 1
@@ -105,7 +98,6 @@ const change = function () {
   loadData()
 }
 
-const server = api.defaults.baseURL
 
 </script>
 
@@ -121,20 +113,7 @@ const server = api.defaults.baseURL
         </q-btn-group>
       </div>
       <div class="row row q-col-gutter-x-sm q-col-gutter-y-lg">
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 col-xl-2" v-for="(item,index) in works" :key="index">
-          <q-card @click="toWorkDetail(item.id)" class="fit">
-            <q-img :src="server+item.cover"/>
-            <q-card-section slot="title">
-              <span class="title">{{ item.title }}</span>
-            </q-card-section>
-            <q-separator/>
-            <q-card-section>
-              <q-chip v-for="(tag,index) in item.tags" :key="index">
-                {{ tag }}
-              </q-chip>
-            </q-card-section>
-          </q-card>
-        </div>
+        <WorkListItem v-for="(item,index) in works" v-bind="item" :key="index"/>
         <div class="pagination-footer">
           <q-pagination :max="totalPage" :model-value="page" @update:model-value="pageChange"/>
         </div>
@@ -146,9 +125,6 @@ const server = api.defaults.baseURL
 </template>
 
 <style scoped lang="sass">
-.title
-  font-weight: bold
-
 .page-with-footer
   /* 关键：为分页预留高度空间，防止最后一行被挡 */
   padding-bottom: 72px

@@ -35,6 +35,7 @@ const columns: QTableColumn[] = [{
   label: 'cover',
 }]
 
+const server = api.defaults.baseURL
 
 </script>
 
@@ -52,7 +53,7 @@ const columns: QTableColumn[] = [{
               tag="div"
 
             >
-              <q-img v-model:src="props.row.cover">
+              <q-img :src="server+(props.row.cover)">
               </q-img>
             </router-link>
           </div>

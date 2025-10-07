@@ -4,7 +4,6 @@ import {useRoute, useRouter} from "vue-router";
 import {computed, onMounted, ref} from "vue";
 import {api} from "boot/axios";
 import {Notify, QTableColumn} from "quasar";
-import {rejects} from "node:assert";
 
 const router = useRouter();
 const route = useRoute();
@@ -37,6 +36,8 @@ function goBack() {
 const detail = ref<Work | null>(null)
 
 const loading = ref(true);
+
+const server = api.defaults.baseURL
 
 api.get(`/api/work/${route.params.id}`).then(res => {
   console.log(res)
@@ -156,7 +157,7 @@ const showImage = (src: string) => {
                           transition-next="slide-left"
                           transition-prev="slide-right"
                           :fullscreen="false" animated swipeable arrows navigation thumbnails infinite>
-                <q-carousel-slide :name="index" :img-src="item"
+                <q-carousel-slide :name="index" :img-src="server+item"
                                   v-for="(item,index) in detail?.previews">
                   <!--                  <q-img :src="item" fit="scale-down"/>-->
                 </q-carousel-slide>

@@ -11,7 +11,7 @@ interface Work {
   id: string;
   title: string;
   description?: string;
-  cover?: string;
+  cover: string;
   tags?: string[];
 }
 
@@ -105,6 +105,8 @@ const change = function () {
   loadData()
 }
 
+const server = api.defaults.baseURL
+
 </script>
 
 <template>
@@ -121,7 +123,7 @@ const change = function () {
       <div class="row row q-col-gutter-x-sm q-col-gutter-y-lg">
         <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 col-xl-2" v-for="(item,index) in works" :key="index">
           <q-card @click="toWorkDetail(item.id)" class="fit">
-            <q-img :src="item.cover"/>
+            <q-img :src="server+item.cover"/>
             <q-card-section slot="title">
               <span class="title">{{ item.title }}</span>
             </q-card-section>

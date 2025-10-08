@@ -41,9 +41,6 @@ function submitUrl() {
     <div class="row">
       <div class="col-10 offset-1">
         <q-card>
-          <q-item>
-            <q-btn flat round icon="close"/>
-          </q-item>
           <q-separator></q-separator>
           <div class="q-pa-md">
             <q-input type="textarea" v-model="detailUrl"/>

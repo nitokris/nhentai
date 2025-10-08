@@ -157,9 +157,6 @@ function selectFast() {
 
 const workId = route.params.workId
 
-function goBack() {
-  router.back()
-}
 </script>
 
 <template>
@@ -174,8 +171,6 @@ function goBack() {
                v-model:pagination="pagination" @request="onRequest">
 
         <template v-slot:top-left>
-          <q-btn v-if="workId!=null" flat round icon="close" @click="goBack"/>
-
           <q-btn color="primary" @click="copySelected">
             拷贝
           </q-btn>

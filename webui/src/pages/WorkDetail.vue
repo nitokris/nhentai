@@ -28,11 +28,6 @@ interface Work {
   files?: WorkFileInfo[]
 }
 
-
-function goBack() {
-  router.back()
-}
-
 const detail = ref<Work | null>(null)
 
 const loading = ref(true);
@@ -143,7 +138,6 @@ const showImage = (src: string) => {
       <div class="col-10 offset-1">
         <q-card>
           <q-item>
-            <q-btn flat round icon="close" @click="goBack"/>
             <q-item-section>
               <q-skeleton v-if="loading" type="text"></q-skeleton>
               <div v-else class="text-h5 q-mt-sm q-mb-xs">{{ detail?.title }}</div>

@@ -6,3 +6,4 @@ nhentai:
   path:
     files: ./static/files
     galleries: ./static/galleries
+    previews: ./static/previews

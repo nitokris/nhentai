@@ -70,7 +70,7 @@ const columns: QTableColumn[] = [
 
 
 const selected = ref<SearchResult[]>([]);
-const filter = ref('');
+const filter = ref(route.query.keyword||'');
 
 const pagination = ref({
   page: 1,
@@ -124,9 +124,6 @@ async function startdownload() {
 const tableRef = ref();
 
 onMounted(() => {
-  if(route.query.keyword){
-    filter.value = route.query.keyword as string
-  }
   tableRef.value.requestServerInteraction();
 });
 

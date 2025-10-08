@@ -17,6 +17,9 @@ type SearchResult = {
 
 const rows = ref<SearchResult[]>([]);
 
+const router = useRouter()
+const route = useRoute()
+
 const {copy} = useClipboard();
 
 const columns: QTableColumn[] = [
@@ -121,6 +124,9 @@ async function startdownload() {
 const tableRef = ref();
 
 onMounted(() => {
+  if(route.query.keyword){
+    filter.value = route.query.keyword as string
+  }
   tableRef.value.requestServerInteraction();
 });
 
@@ -151,8 +157,7 @@ function selectFast() {
   });
 }
 
-const route = useRoute()
-const router = useRouter()
+
 const workId = route.params.workId
 
 function goBack() {
@@ -211,10 +216,10 @@ function goBack() {
               <div v-html="props.row.title.replace(filter,`<span class='text-red'>${filter}</span>`)"></div>
             </q-td>
             <q-td key="size" :props="props">
-              <span>{{props.row.size}}</span>
+              <span>{{ props.row.size }}</span>
             </q-td>
             <q-td key="date" :props="props">
-              <span>{{props.row.date}}</span>
+              <span>{{ props.row.date }}</span>
             </q-td>
           </q-tr>
         </template>

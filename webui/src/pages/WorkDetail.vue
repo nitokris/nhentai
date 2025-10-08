@@ -62,7 +62,7 @@ const slide = ref(0)
 const score = ref(0)
 
 const searchMagnet = function () {
-  router.push({path: `/magnet/${route.params.id}`})
+  router.push({path: `/magnet/${route.params.id}?keyword=${detail.value?.title}`})
 }
 
 const tab = ref('description')

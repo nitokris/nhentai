@@ -7,3 +7,8 @@ nhentai:
     files: ./static/files
     galleries: ./static/galleries
     previews: ./static/previews
+spring:
+  datasource:
+    url: jdbc:sqlite:file::memory:?cache=shared
+  exposed:
+    show-sql: true

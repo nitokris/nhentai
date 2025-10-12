@@ -1,32 +1,15 @@
 <script setup lang="ts">
 
 import {useRoute, useRouter} from "vue-router";
-import {computed, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {api} from "boot/axios";
 import {Notify, QTableColumn} from "quasar";
+import {Work} from "src/api/types/work";
+import {workDetail} from "src/api/work";
 
 const router = useRouter();
 const route = useRoute();
 
-interface WorkFileInfo {
-  displayName: string,
-  fileHash: string
-}
-
-interface Work {
-  id: number;
-  title: string
-  description: string
-  resources: string[]
-  previews?: string[]
-  isFavourite: boolean
-  isStar: boolean
-  magnets?: []
-  actors?: string
-  tags?: string[],
-  circle?: string
-  files?: WorkFileInfo[]
-}
 
 const detail = ref<Work | null>(null)
 
@@ -34,12 +17,16 @@ const loading = ref(true);
 
 const server = api.defaults.baseURL
 
-api.get(`/api/work/${route.params.id}`).then(res => {
-  console.log(res)
-  detail.value = res.data
-  console.log(detail.value)
-  loading.value = false
+onMounted(async () => {
+  try {
+    const id = route.params.id as string;
+    const resp = await workDetail(id);
+    detail.value = resp.data
+  } finally {
+    loading.value = false
+  }
 })
+
 const handleFavourite = async () => {
   if (detail.value != null) {
     detail.value.isFavourite = !detail.value?.isFavourite;

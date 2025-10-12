@@ -1,5 +1,6 @@
-import { defineBoot } from '#q-app/wrappers';
-import axios, { type AxiosInstance } from 'axios';
+import {defineBoot} from '#q-app/wrappers';
+import axios, {type AxiosInstance} from 'axios';
+import {Notify} from "quasar";
 
 declare module 'vue' {
   interface ComponentCustomProperties {
@@ -15,13 +16,13 @@ declare module 'vue' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const { protocol, hostname, port } = window.location;
+const {protocol, hostname, port} = window.location;
 
-const apiBaseUrl = `${protocol}//${hostname}:${port ?? 80}/`; // 自动使用当前访问的域名或IP
+const apiBaseUrl = `${protocol}//${hostname}:${port ?? 80}/api`; // 自动使用当前访问的域名或IP
 // import.meta.env.VITE_API_BASE_URL
-const api = axios.create({ baseURL:  apiBaseUrl});
+const api = axios.create({baseURL: apiBaseUrl});
 console.log('baseURL:', import.meta.env.VITE_API_BASE_URL);
-export default defineBoot(({ app }) => {
+export default defineBoot(({app}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;
@@ -33,4 +34,4 @@ export default defineBoot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api };
+export {api};

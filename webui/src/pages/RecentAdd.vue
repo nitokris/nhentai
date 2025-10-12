@@ -1,31 +1,27 @@
 <script setup lang="ts">
 
 import {onMounted, ref} from "vue";
-import {QPagination, QPaginationProps, QTableColumn} from "quasar";
+import {QTableColumn} from "quasar";
 import {api} from "boot/axios";
+import {recent} from "src/api/work";
+import {Work} from "src/api/types/work";
 
-
-interface Work {
-  id: number;
-  title: string;
-  description: string;
-  cover: string;
-}
 
 const loading = ref(true);
 
 const works = ref<Work[]>([]);
 const rowsPerPage = 8
 
-const pagination: QPagination = {
+const pagination = {
   rowsPerPage: rowsPerPage
 }
 onMounted(async () => {
-  api.get(`/api/work/recent?count=${pagination.rowsPerPage}`).then(res => {
-    console.log(res)
-    works.value = res.data
+  try {
+    const items = await recent(pagination.rowsPerPage)
+    works.value = items.data
+  } finally {
     loading.value = false
-  })
+  }
 })
 
 const columns: QTableColumn[] = [{

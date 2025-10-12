@@ -10,7 +10,7 @@ const router = useRouter()
 const detailUrl = ref('')
 
 function submitUrl() {
-  api.post('/api/work/url', {url: detailUrl.value})
+  api.post('/work/url', {url: detailUrl.value})
     .then(resp => {
       if (resp.status !== 200) {
         Promise.reject(resp.statusText)

@@ -1,5 +1,5 @@
 import {defineBoot} from '#q-app/wrappers';
-import axios, {type AxiosInstance} from 'axios';
+import axios, {type AxiosInstance, AxiosRequestConfig} from 'axios';
 import {Notify} from "quasar";
 
 declare module 'vue' {
@@ -20,14 +20,22 @@ const {protocol, hostname, port} = window.location;
 
 const apiBaseUrl = `${protocol}//${hostname}:${port ?? 80}/api`; // 自动使用当前访问的域名或IP
 // import.meta.env.VITE_API_BASE_URL
-const api = axios.create({baseURL: apiBaseUrl});
-api.interceptors.response.use(resp => resp.data, err => {
+const instance = axios.create({baseURL: apiBaseUrl});
+instance.interceptors.response.use(resp => resp.data, err => {
   Notify.create({
     type: 'negative',
     message: err.response?.data?.message || '网络错误'
   })
   return Promise.reject(err)
-})
+});
+
+type DataAxiosInstance = Omit<AxiosInstance, 'get' | 'post' | 'put' | 'delete'> & {
+  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T>
+  delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>
+}
+
 
 export default defineBoot(({app}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -36,9 +44,9 @@ export default defineBoot(({app}) => {
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 
-  app.config.globalProperties.$api = api;
+  app.config.globalProperties.$api = instance;
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 });
 
-export {api};
+export const api = instance as DataAxiosInstance

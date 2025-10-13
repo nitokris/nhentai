@@ -20,8 +20,7 @@ const server = api.defaults.baseURL
 onMounted(async () => {
   try {
     const id = route.params.id as string;
-    const resp = await workDetail(id);
-    detail.value = resp.data
+    detail.value = await workDetail(id)
   } finally {
     loading.value = false
   }

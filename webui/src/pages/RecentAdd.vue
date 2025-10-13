@@ -17,8 +17,7 @@ const pagination = {
 }
 onMounted(async () => {
   try {
-    const items = await recent(pagination.rowsPerPage)
-    works.value = items.data
+    works.value = await recent(pagination.rowsPerPage)
   } finally {
     loading.value = false
   }

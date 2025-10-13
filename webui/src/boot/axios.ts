@@ -21,7 +21,14 @@ const {protocol, hostname, port} = window.location;
 const apiBaseUrl = `${protocol}//${hostname}:${port ?? 80}/api`; // 自动使用当前访问的域名或IP
 // import.meta.env.VITE_API_BASE_URL
 const api = axios.create({baseURL: apiBaseUrl});
-console.log('baseURL:', import.meta.env.VITE_API_BASE_URL);
+api.interceptors.response.use(resp => resp.data, err => {
+  Notify.create({
+    type: 'negative',
+    message: err.response?.data?.message || '网络错误'
+  })
+  return Promise.reject(err)
+})
+
 export default defineBoot(({app}) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 

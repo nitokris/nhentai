@@ -1,23 +1,14 @@
 <script setup lang="ts">
 import {onMounted, ref} from 'vue';
-import {api} from 'boot/axios';
 import {useClipboard} from '@vueuse/core';
 import {QTableColumn} from "quasar";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
+import {Magnet} from "src/api/types/magnet";
+import {bindToWork, record, search} from "src/api/magnet";
 
-type SearchResult = {
-  url: string;
-  title: string;
-  type: string;
-  size: string;
-  date: string;
-  isDownloaded: string;
-  [key: string]: string;
-};
 
-const rows = ref<SearchResult[]>([]);
+const rows = ref<Magnet[]>([]);
 
-const router = useRouter()
 const route = useRoute()
 
 const {copy} = useClipboard();
@@ -69,8 +60,8 @@ const columns: QTableColumn[] = [
 ];
 
 
-const selected = ref<SearchResult[]>([]);
-const filter = ref(route.query.keyword||'');
+const selected = ref<Magnet[]>([]);
+const filter = ref(route.query.keyword as string || '');
 
 const pagination = ref({
   page: 1,
@@ -78,7 +69,7 @@ const pagination = ref({
   rowsNumber: 0
 });
 
-async function search() {
+async function clickSearch() {
   await onRequest({pagination: {page: 1}})
 }
 
@@ -92,32 +83,15 @@ async function copySelected() {
 }
 
 async function startdownload() {
-  const arr: {}[] = [];
+  const arr: Magnet[] = [];
   selected.value.forEach(item => {
     // str += `${item.magnet}\n`;
-    arr.push({
-      title: item.title,
-      url: item.url,
-      size: item.size,
-      date: item.date,
-      category: item.category
-    });
+    arr.push(item);
   });
   console.log(arr);
-  await api.post(`/api/magnet`, {
-    magnetMetaData: arr
-  }).then(resp => {
-    if (resp.status === 200) {
-      console.log(resp.data)
-      const arr = []
-      resp.data.forEach((magnetId: object) => {
-        arr.push(magnetId[`id`])
-      })
-      api.put(`/api/work/${workId}/magnets`, arr).then(resp => {
-        console.log(resp.status)
-      })
-    }
-  })
+  const ids = await record(arr)
+  const idStrs = ids.map(it => it.id);
+  await bindToWork(workId as string, idStrs)
   selected.value = [];
 }
 
@@ -133,17 +107,16 @@ const loading = ref(false);
 async function onRequest(props: any) {
   const {page} = props.pagination;
   loading.value = true;
-  console.log(filter.value.trim().replace('[', '').replace(']', ''));
-  await api.get(`/api/magnet/search?keyword=${filter.value.trim().replace('[', '').replace(']', '')}&page=${page}`).then((res) => {
-    rows.value = res.data.data;
+  try {
+    const filterStr = filter.value.trim().replace('[', '').replace(']', '')
+    const searchResult = await search(filterStr, page)
+    rows.value = searchResult.data
     pagination.value.page = page;
     pagination.value.rowsPerPage = 75;
-    pagination.value.rowsNumber = res.data.pagination.total;
-    // selected.value = [];
-    // console.log(res.data);
-  }).finally(() => {
+    pagination.value.rowsNumber = searchResult.pagination.total;
+  } finally {
     loading.value = false;
-  });
+  }
 }
 
 function selectFast() {
@@ -185,7 +158,7 @@ const workId = route.params.workId
         <template v-slot:top-right>
           <q-input borderless dense debounce="300" v-model="filter" placeholder="搜索">
             <template v-slot:append>
-              <q-btn color="primary" @click="search">
+              <q-btn color="primary" @click="clickSearch">
                 <q-icon name="search"/>
               </q-btn>
 

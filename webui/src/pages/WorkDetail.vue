@@ -247,20 +247,6 @@ const showImage = (src: string) => {
         </q-card>
       </div>
     </div>
-    <!-- 弹出大图 -->
-    <q-dialog v-model="dialog" persistent no-backdrop-dismiss>
-      <q-card
-        class="bg-transparent shadow-none"
-        style="width: 100vw; height: 100vh; display: flex; justify-content: center; align-items: center;"
-        @click="dialog = false"
-      >
-        <q-img
-          :src="selectedImage"
-          style="max-width: 90vw; max-height: 90vh;"
-          @click.stop
-        />
-      </q-card>
-    </q-dialog>
   </q-page>
 
 </template>

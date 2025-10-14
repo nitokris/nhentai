@@ -66,16 +66,15 @@ watch(() => props.pagination, (newVal) => {
 }, {deep: true})
 
 watch(() => props.loading, (newVal) => {
-  localPagination.value = newVal
+  localLoading.value = newVal
 }, {deep: true})
 
 
-const emits = defineEmits(['onPageChange'])
+const emits = defineEmits(['request'])
 
-const changePagination = function (props: any) {
-  console.log(props)
-  emits('onPageChange', props)
-  localPagination.value.page = props.newPage
+
+function onRequest(props:any) {
+  emits('request', props.pagination)
 }
 
 </script>
@@ -91,7 +90,7 @@ const changePagination = function (props: any) {
                :fullscreen="false"
                class="my-sticky-header-table"
                style="height: 85vh;max-height: 85vh;"
-               @update:pagination="changePagination"
+               @request="onRequest"
       >
         <template v-slot:top-right>
           <slot name="top-right"></slot>

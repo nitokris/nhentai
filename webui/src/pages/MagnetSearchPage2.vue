@@ -15,20 +15,16 @@ const pagination = ref({
 });
 
 const filter = ref('')
-const page = 1;
-
-const nextPage = function (props: any) {
-  console.log('magnet search page2 next page:', props)
-}
 
 
-const queryMagnet = async function () {
+
+const queryMagnet = async function ( props: any) {
   loading.value = true;
   try {
     const filterStr = filter.value.trim().replace('[', '').replace(']', '')
-    const searchResult = await search(filterStr, page)
+    const searchResult = await search(filterStr, props.page)
     rows.value = searchResult.data
-    pagination.value.page = page;
+    pagination.value.page = searchResult.pagination.page;
     pagination.value.rowsPerPage = 75;
     pagination.value.rowsNumber = searchResult.pagination.total;
   } finally {
@@ -37,7 +33,7 @@ const queryMagnet = async function () {
 }
 
 onMounted(async () => {
-  await queryMagnet()
+  await queryMagnet( pagination.value)
 })
 
 
@@ -46,9 +42,11 @@ onMounted(async () => {
 <template>
 
   <q-page padding>
-    <MagnetTable :rows="rows" :loading="loading" v-model:pagination="pagination" @on-page-change="nextPage">
+    <MagnetTable :rows="rows" v-model:loading="loading" v-model:pagination="pagination"
+                 @request="queryMagnet"
+    >
       <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="搜索" >
+        <q-input borderless dense debounce="300" v-model="filter" placeholder="搜索">
           <template v-slot:append>
             <q-btn color="primary" @click="queryMagnet">
               <q-icon name="search"/>

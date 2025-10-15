@@ -1,8 +1,12 @@
 package com.nitokrisalpha.infranstructure.config
 
 import com.nitokrisalpha.common.logger
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.FileUtils.toFile
+import org.apache.commons.io.file.PathUtils
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
+import java.nio.file.Files
 import kotlin.io.path.Path
 
 @Component
@@ -16,11 +20,14 @@ class PathConfig(
 ) {
     init {
         logger.info("start create tmp path:{}", tmpPath)
-        Path(tmpPath).toFile().mkdirs()
+        PathUtils.createParentDirectories(Path(tmpPath).normalize())
         logger.info("start create previews path:{}", previews)
-        Path(previews).toFile().mkdirs()
-        Path(galleries).toFile().mkdirs()
-        Path(files).toFile().mkdirs()
-        Path(qbBitTorrentDownloadPath).toFile().mkdir()
+        PathUtils.createParentDirectories(Path(previews).normalize())
+        logger.info("start create galleries path:{}", galleries)
+        PathUtils.createParentDirectories(Path(galleries).normalize())
+        logger.info("start create files path:{}", files)
+        PathUtils.createParentDirectories(Path(files).normalize())
+        logger.info("start create qbBitTorrentDownloadPath:{}", qbBitTorrentDownloadPath)
+        PathUtils.createParentDirectories(Path(qbBitTorrentDownloadPath).normalize())
     }
 }

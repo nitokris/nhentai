@@ -1,11 +1,11 @@
 package com.nitokrisalpha
 
-import com.nitokrisalpha.infranstructure.config.Http4kConfig
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableScheduling
 
+@EnableScheduling
 @SpringBootApplication
 @ConfigurationPropertiesScan
 class NcomicSpringbootApplication

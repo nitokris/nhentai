@@ -109,12 +109,11 @@ const readFile = function (fileId: string) {
   console.log(fileId)
   router.push({path: `/read/${fileId}`})
 }
-const dialog = ref(false);       // 控制弹窗显示
-const selectedImage = ref('');   // 当前点击的大图
-const showImage = (src: string) => {
-  selectedImage.value = src;
-  dialog.value = true;
-};
+
+const magnetTablePagination = {
+  rowsPerPage: 0
+}
+
 </script>
 
 <template>
@@ -225,7 +224,7 @@ const showImage = (src: string) => {
               <div v-else>
                 <q-table flat hide-bottom
                          :columns="columns" :rows="detail?.magnets" row-key="url" :fullscreen="false"
-                         :pagination="{ rowsPerPage: 0 }">
+                         :pagination="magnetTablePagination">
                   <template v-slot:body="props">
                     <q-tr>
                       <q-td key="category" :props="props">

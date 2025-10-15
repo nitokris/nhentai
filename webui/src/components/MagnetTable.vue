@@ -53,7 +53,9 @@ const columns: QTableColumn[] = [
 interface Props {
   rows: Magnet[]
   loading: boolean,
-  pagination: any
+  pagination: any,
+  style: string,
+  flat: boolean
 }
 
 const props = defineProps<Props>()
@@ -73,7 +75,7 @@ watch(() => props.loading, (newVal) => {
 const emits = defineEmits(['request'])
 
 
-function onRequest(props:any) {
+function onRequest(props: any) {
   emits('request', props.pagination)
 }
 
@@ -83,14 +85,15 @@ function onRequest(props:any) {
   <q-card>
     <template v-slot:default>
 
-      <q-table ref="tableRef" :rows="rows" :columns="columns" selection="multiple"
+      <q-table :rows="rows" :columns="columns" selection="multiple"
                row-key="url"
+               :flat="flat"
                v-model:pagination="localPagination"
                v-model:loading="localLoading"
                :fullscreen="false"
                class="my-sticky-header-table"
-               style="height: 85vh;max-height: 85vh;"
                @request="onRequest"
+               :style="style"
       >
         <template v-slot:top-right>
           <slot name="top-right"></slot>
@@ -127,7 +130,6 @@ function onRequest(props:any) {
 
 .text-red
   color: red
-
 
 .my-sticky-header-table
   .q-table__top,

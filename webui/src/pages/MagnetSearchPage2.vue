@@ -3,6 +3,8 @@
 import MagnetTable from "components/MagnetTable.vue";
 import {onMounted, ref} from "vue";
 import {search} from "src/api/magnet";
+import {dom} from "quasar";
+import height = dom.height;
 
 const rows = ref([])
 
@@ -44,6 +46,8 @@ onMounted(async () => {
   <q-page padding>
     <MagnetTable :rows="rows" v-model:loading="loading" v-model:pagination="pagination"
                  @request="queryMagnet"
+                 :flat="false"
+                 :style="`height: 85vh;max-height: 85vh;`"
     >
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="搜索">

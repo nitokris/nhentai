@@ -9,6 +9,7 @@ class Work(
     metaData: WorkMetaData,
     resources: Collection<Resource> = emptyList(),
     magnets: Collection<MagnetId> = emptyList(),
+    val type: String = "",
     val siteInfo: SiteInfo = SiteInfo(Site.UNKNOWN, "")
 ) {
     private val _magnets: MutableCollection<MagnetId> = mutableSetOf()

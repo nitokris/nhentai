@@ -9,6 +9,7 @@ data class WorkMetaData(
     val tags: List<String>,
     val actors: List<String>,
     val circle: String,
+    val workType: String = ""
 ) {
 
 }

@@ -6,17 +6,13 @@ import com.nitokrisalpha.common.logger
 import com.nitokrisalpha.domain.entity.Site
 import com.nitokrisalpha.domain.entity.WorkMetaData
 import com.nitokrisalpha.infranstructure.config.PathConfig
-import io.undertow.util.URLUtils
 import org.apache.commons.io.IOUtils
-import org.apache.hc.client5.http.utils.URIUtils
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Uri
-import org.http4k.lens.string
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.module.Configuration
 
 
 class FanzaProviderImpl(
@@ -107,6 +103,7 @@ class FanzaProviderImpl(
             val releaseDate = items.findInfo("配信開始日")
             val author = items.findInfo("作者")
             val finalUpdateDate = items.findInfo("最終更新日")
+            val workType = items.findInfo("作品形式")
             val tagHtmlTags = items.findElements("ジャンル", "a.genreTag__txt")
             val tags = tagHtmlTags.eachText()
             val mapping = downloadAndReplacePreviews(previews)
@@ -127,6 +124,7 @@ class FanzaProviderImpl(
                 tags = tags,
                 actors = listOf(author),
                 circle = circle,
+                workType = workType
             )
         }
         logger.error("failed to fetch metadata from fanza for id: $id,http status: ${response.status}")

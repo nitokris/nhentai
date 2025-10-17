@@ -60,6 +60,11 @@ dependencies {
     implementation(libs.exposed.migration.jdbc)
 // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     implementation(libs.sqlite.jdbc)
+
+    // https://mvnrepository.com/artifact/org.drewcarlson/qbittorrent-client
+    implementation("org.drewcarlson:qbittorrent-client:1.1.0-alpha02")
+    implementation("org.drewcarlson:qbittorrent-models:1.1.0-alpha02")
+    implementation("io.ktor:ktor-client-okhttp:3.0.0")
 }
 
 kotlin {

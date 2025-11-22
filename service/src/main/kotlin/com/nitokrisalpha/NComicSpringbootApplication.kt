@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @EnableScheduling
 @SpringBootApplication
 @ConfigurationPropertiesScan
-class NcomicSpringbootApplication
+class NComicSpringbootApplication
 
 fun main(args: Array<String>) {
-    runApplication<NcomicSpringbootApplication>(*args)
+    runApplication<NComicSpringbootApplication>(*args)
 }

@@ -106,6 +106,13 @@ class FANZADoujinApi(
                     }
                 }
                 val infoWrapper = it.select(".l-areaProductInfo")
+                // todo 遍历所有的信息，转换为对应的类属性
+                infoWrapper.select("div.productInformation__item").forEach { item ->
+                    val ttl = item.select(".informationList__ttl")
+                    val txt = item.select(".informationList__txt")
+                    log.info("ttl is:{}", ttl.text())
+                    log.info("txt is:{}", txt.text())
+                }
                 val summaryWrapper = it.select(".l-areaProductSummary")
                 summary = summaryWrapper.html()
             }

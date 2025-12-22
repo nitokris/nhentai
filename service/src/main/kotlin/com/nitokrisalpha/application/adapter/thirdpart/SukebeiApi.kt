@@ -7,14 +7,12 @@ import com.nitokrisalpha.business.thirdpart.ResourceSearchApi
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method
 import org.http4k.core.Request
-import org.springframework.boot.autoconfigure.jackson.JacksonProperties
 import org.springframework.stereotype.Component
 
 @Component
 class SukebeiApi(
     private val client: HttpHandler,
     private val properties: SukebeiApiProperties,
-    private val jacksonProperties: JacksonProperties
 ) : ResourceSearchApi {
 
     companion object {

@@ -1,4 +1,4 @@
-package com.nitokrisalpha.application.thirdpart
+package com.nitokrisalpha.application.adapter.thirdpart
 
 import com.fleeksoft.ksoup.Ksoup
 import com.nitokrisalpha.application.configuration.FANZAApiProperties
@@ -72,7 +72,10 @@ class FANZADoujinApi(
         if (channel == null) {
             return work
         }
-        val request = Request(Method.GET, "https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=${channel.identifier}/")
+        val request = Request.Companion(
+            Method.GET,
+            "https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=${channel.identifier}/"
+        )
             .header("cookie", fanzaApiProperties.cookie)
             .header("user-agent", fanzaApiProperties.userAgent)
             .header("dnt", fanzaApiProperties.dnt)

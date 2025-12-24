@@ -71,7 +71,7 @@ class FANZADoujinApi(
             }
             // 解析html
             val html = response.bodyString()
-            // 获取作品详情
+            // 获取概要信息
             val document = Ksoup.parse(html)
             val productItems = document.select(".m-productList .productList__item")
             if (productItems.isEmpty()) {

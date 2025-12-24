@@ -103,10 +103,11 @@ class FANZADoujinApi(
         if (channel == null) {
             return work
         }
-        val request = Request.Companion(
-            Method.GET,
-            "https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=${channel.identifier}/"
-        )
+        val url = buildString {
+            append("https://www.dmm.co.jp/dc/doujin/-/detail/=")
+            append("/cid=${channel.identifier}/")
+        }
+        val request = Request(Method.GET, url)
             .header("cookie", fanzaApiProperties.cookie)
             .header("user-agent", fanzaApiProperties.userAgent)
             .header("dnt", fanzaApiProperties.dnt)
@@ -126,7 +127,6 @@ class FANZADoujinApi(
             //
             val detailWrapper = documents.selectFirst(".l-areaVariableBoxWrap")
             detailWrapper?.let {
-                //todo 这里只需要选取 类似：d_691394jp-001.jpg的字段即可，而不是类似：d_691394js-001.jpg
                 val imageWrapper = it.select(".l-areaProductImage")
                 imageWrapper.select("img").forEach { img ->
                     val href = img.attr("src")

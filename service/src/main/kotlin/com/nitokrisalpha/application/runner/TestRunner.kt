@@ -19,7 +19,7 @@ class TestRunner(
 //        val workDetail = fanzaDoujinApi.workDetail(work)
 //        log.info(workDetail.toString())
         val circle = Circle("DOLL PLAY")
-        circle.channels.add(PublishChannel("FANZA_DOUJIN", "76244"))
-        log.info("works:{}", fanzaDoujinApi.circleWorks(circle = circle, page = 2))
+        circle.channels.add(PublishChannel("FANZA_DOUJIN", "76046"))
+        log.info("works:{}", fanzaDoujinApi.circleWorks(circle = circle))
     }
 }

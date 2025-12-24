@@ -32,13 +32,11 @@ class FANZADoujinApi(
         }
 
         val REGEX = """cid=(d_\d+)""".toRegex()
+
+
     }
 
-    override fun circleWorks(
-        circle: Circle,
-        sort: Sort,
-        page: Int
-    ): List<Work> {
+    override fun circleWorks(circle: Circle, sort: Sort): List<Work> {
 
         // todo 这里的channel find设计需要更改
         val channel = circle.channels.find {
@@ -48,46 +46,52 @@ class FANZADoujinApi(
         if (channel == null) {
             return emptyList()
         }
-
-        var uri = "https://www.dmm.co.jp/dc/doujin/-/list/=/article=maker/id=${channel.identifier}/sort=${convertSort(sort)}/";
-        if(page>1){
-            uri="${uri}/page=$page/"
-        }
-
-        val request = Request(
-            Method.GET,
-            uri
-        )
-            .header("cookie", fanzaApiProperties.cookie)
-            .header("user-agent", fanzaApiProperties.userAgent)
-            .header("dnt", fanzaApiProperties.dnt)
-
-
-        val response = client(request)
-        // todo 如何错误检测？
-        if (!response.status.successful) {
-            log.error("failed to get circle:{} works from fanza doujin", circle.name)
-            return emptyList()
-        }
-        // 解析html
-        val html = response.bodyString()
-        // 获取作品详情
-        val document = Ksoup.parse(html)
-        val productItems = document.select(".m-productList .productList__item")
         val result = mutableListOf<Work>()
-        for (productItem in productItems) {
-            val work = Work()
-            work.cover = productItem.select("img").attr("src")
-            val titleElement = productItem.select(".tileListTtl__txt a")
-            work.title = titleElement.text()
-            // https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_632387/
-            val href = titleElement.attr("href")
-            val matchResult = REGEX.find(href)
-            matchResult?.groups?.get(1)?.value?.let {
-                val workChannel = PublishChannel(CHANNEL_NAME, it)
-                work.channels.add(workChannel)
-                result.add(work)
+        var curPage = 1
+        while (true) {
+            val url = buildString {
+                append("https://www.dmm.co.jp/dc/doujin/-/list/=/")
+                append("article=maker/")
+                append("id=${channel.identifier}/")
+                append("sort=${convertSort(sort)}/")
+                // 动态处理分页逻辑
+                if (curPage > 1) {
+                    append("page=$curPage/")
+                }
             }
+            val request = Request(Method.GET, url)
+                .header("cookie", fanzaApiProperties.cookie)
+                .header("user-agent", fanzaApiProperties.userAgent)
+                .header("dnt", fanzaApiProperties.dnt)
+
+            val response = client(request)
+            if (!response.status.successful) {
+                log.error("failed to get circle:{} works from fanza doujin", circle.name)
+                break
+            }
+            // 解析html
+            val html = response.bodyString()
+            // 获取作品详情
+            val document = Ksoup.parse(html)
+            val productItems = document.select(".m-productList .productList__item")
+            if (productItems.isEmpty()) {
+                break
+            }
+            for (productItem in productItems) {
+                val work = Work()
+                work.cover = productItem.select("img").attr("src")
+                val titleElement = productItem.select(".tileListTtl__txt a")
+                work.title = titleElement.text()
+                // https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_632387/
+                val href = titleElement.attr("href")
+                val matchResult = REGEX.find(href)
+                matchResult?.groups?.get(1)?.value?.let {
+                    val workChannel = PublishChannel(CHANNEL_NAME, it)
+                    work.channels.add(workChannel)
+                    result.add(work)
+                }
+            }
+            curPage++
         }
         return result
     }

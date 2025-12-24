@@ -4,6 +4,7 @@ class Work(
 ) {
     val channels: MutableList<PublishChannel> = mutableListOf()
     var title: String = ""
+    var cover: String = ""
     val images = mutableSetOf<String>()
     var summary: String = ""
     override fun toString(): String {

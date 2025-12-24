@@ -4,6 +4,7 @@ import com.fleeksoft.ksoup.Ksoup
 import com.nitokrisalpha.application.configuration.FANZAApiProperties
 import com.nitokrisalpha.application.logging.log
 import com.nitokrisalpha.business.entity.Circle
+import com.nitokrisalpha.business.entity.PublishChannel
 import com.nitokrisalpha.business.entity.Work
 import com.nitokrisalpha.business.entity.work
 import com.nitokrisalpha.business.thirdpart.PublishChannelApi
@@ -29,6 +30,8 @@ class FANZADoujinApi(
                 Sort.DATE -> return "date"
             }
         }
+
+        val REGEX = """cid=(d_\d+)""".toRegex()
     }
 
     override fun circleWorks(
@@ -46,11 +49,19 @@ class FANZADoujinApi(
             return emptyList()
         }
 
+        var uri = "https://www.dmm.co.jp/dc/doujin/-/list/=/article=maker/id=${channel.identifier}/sort=${convertSort(sort)}/";
+        if(page>1){
+            uri="${uri}/page=$page/"
+        }
+
         val request = Request(
             Method.GET,
-            " https://www.dmm.co.jp/dc/doujin/-/list/=/article=maker/id=${channel.identifier}/sort=${convertSort(sort)}/page=${page}/"
+            uri
         )
-            .header("Cookies", fanzaApiProperties.cookie)
+            .header("cookie", fanzaApiProperties.cookie)
+            .header("user-agent", fanzaApiProperties.userAgent)
+            .header("dnt", fanzaApiProperties.dnt)
+
 
         val response = client(request)
         // todo 如何错误检测？
@@ -62,7 +73,23 @@ class FANZADoujinApi(
         val html = response.bodyString()
         // 获取作品详情
         val document = Ksoup.parse(html)
-        TODO("Not yet implemented")
+        val productItems = document.select(".m-productList .productList__item")
+        val result = mutableListOf<Work>()
+        for (productItem in productItems) {
+            val work = Work()
+            work.cover = productItem.select("img").attr("src")
+            val titleElement = productItem.select(".tileListTtl__txt a")
+            work.title = titleElement.text()
+            // https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_632387/
+            val href = titleElement.attr("href")
+            val matchResult = REGEX.find(href)
+            matchResult?.groups?.get(1)?.value?.let {
+                val workChannel = PublishChannel(CHANNEL_NAME, it)
+                work.channels.add(workChannel)
+                result.add(work)
+            }
+        }
+        return result
     }
 
     override fun workDetail(work: Work): Work {

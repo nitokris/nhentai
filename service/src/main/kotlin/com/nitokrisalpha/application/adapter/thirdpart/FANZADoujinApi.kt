@@ -3,8 +3,11 @@ package com.nitokrisalpha.application.adapter.thirdpart
 import com.fleeksoft.ksoup.Ksoup
 import com.nitokrisalpha.application.configuration.FANZAApiProperties
 import com.nitokrisalpha.application.logging.log
+import com.nitokrisalpha.business.builder.buildMetadata
 import com.nitokrisalpha.business.entity.Circle
+import com.nitokrisalpha.business.entity.PublishChannel
 import com.nitokrisalpha.business.entity.Work
+import com.nitokrisalpha.business.entity.WorkId
 import com.nitokrisalpha.business.thirdpart.PublishChannelApi
 import com.nitokrisalpha.business.thirdpart.Sort
 import org.apache.commons.lang3.StringUtils
@@ -77,7 +80,11 @@ class FANZADoujinApi(
                 val cover = productItem.select("img").attr("src")
                 val titleElement = productItem.select(".tileListTtl__txt a")
                 val title = titleElement.text()
-                val work = Work(cover, title)
+                val workMetadata = buildMetadata {
+                    this.title = title
+                    this.cover = cover
+                }
+                val work = Work(WorkId(), workMetadata)
                 // https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_632387/
                 val href = titleElement.attr("href")
                 val matchResult = REGEX.find(href)
@@ -90,13 +97,7 @@ class FANZADoujinApi(
         return result
     }
 
-    override fun workDetail(work: Work): Work {
-        val channel = work.channels.find {
-            it.name == CHANNEL_NAME
-        }
-        if (channel == null) {
-            return work
-        }
+    override fun workDetail(channel: PublishChannel): Work {
         val url = buildString {
             append("https://www.dmm.co.jp/dc/doujin/-/detail/=")
             append("/cid=${channel.identifier}/")
@@ -108,44 +109,51 @@ class FANZADoujinApi(
         val response = client(request)
         if (!response.status.successful) {
             log.error("failed to get work detail page:{}", response.status.description)
-            return work
+            return Work.DUMMY
         }
         val html = response.bodyString()
         val documents = Ksoup.parse(html)
-        val titleWrapper = documents.selectFirst(".l-areaProductTitle h1")
-        var title = ""
-        val images = mutableSetOf<String>()
-        var summary = ""
-        if (titleWrapper != null) {
-            titleWrapper.select("span").remove()
-            title = titleWrapper.text()
-        }
-        //
-        val detailWrapper = documents.selectFirst(".l-areaVariableBoxWrap")
-        detailWrapper?.let {
-            val imageWrapper = it.select(".l-areaProductImage")
-            imageWrapper.select("img").forEach { img ->
-                val href = img.attr("src")
-                href.let {
-                    val url = URI(href).toURL()
-                    val fileName = url.file
-                    // d_691394jp-001.jpg
-                    if (!StringUtils.containsIgnoreCase(fileName, "js")) {
-                        images += href
+        val workMetadata = buildMetadata {
+            // 解析标题
+            documents.selectFirst(".l-areaProductTitle h1")?.let {
+                it.select("span").remove()
+                this.title = it.text()
+            }
+            documents.selectFirst(".l-areaVariableBoxWrap")?.let {
+                // 解析图片
+                it.select(".l-areaProductImage").select("img").forEach { img ->
+                    val href = img.attr("src")
+                    href.let {
+                        val url = URI(href).toURL()
+                        val fileName = url.file
+                        // d_691394jp-001.jpg
+                        if (!StringUtils.containsIgnoreCase(fileName, "js")) {
+                            this.addImage(href)
+                        }
                     }
                 }
+                // 解析信息
+                it.select(".l-areaProductInfo").select("div.productInformation__item").forEach { item ->
+                    val ttl = item.select(".informationList__ttl").text()
+                    val txt = item.select(".informationList__txt")
+                    if (ttl == "作品形式") {
+                        this.format = txt.text()
+                    }
+                    if (ttl == "シリーズ") {
+                        this.series = txt.text()
+                    }
+                    if (ttl == "題材") {
+                        this.subjectMatter = txt.text()
+                    }
+                    if (ttl == "ジャンル") {
+                        item.select(".informationList__item a").map { tagElement ->
+                            addTag(tagElement.text())
+                        }
+                    }
+                    summary = it.select(".l-areaProductSummary").html()
+                }
             }
-            val infoWrapper = it.select(".l-areaProductInfo")
-            // todo 遍历所有的信息，转换为对应的类属性
-            infoWrapper.select("div.productInformation__item").forEach { item ->
-                val ttl = item.select(".informationList__ttl")
-                val txt = item.select(".informationList__txt")
-                log.info("ttl is:{}", ttl.text())
-                log.info("txt is:{}", txt.text())
-            }
-            val summaryWrapper = it.select(".l-areaProductSummary")
-            summary = summaryWrapper.html()
         }
-        return Work(title, work.cover, "", "", summary, work.tags, images, work.subjectMatter)
+        return Work(WorkId(), workMetadata)
     }
 }

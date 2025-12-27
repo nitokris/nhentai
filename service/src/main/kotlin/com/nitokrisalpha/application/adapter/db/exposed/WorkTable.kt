@@ -3,6 +3,7 @@ package com.nitokrisalpha.application.adapter.db.exposed
 import org.jetbrains.exposed.v1.core.dao.id.LongIdTable
 
 object WorkTable : LongIdTable("work") {
+    val workId = char("work_id",36)
     val title = varchar("title", 255)
     val cover = varchar("cover", 255).default("")
     val format = varchar("format", 100)

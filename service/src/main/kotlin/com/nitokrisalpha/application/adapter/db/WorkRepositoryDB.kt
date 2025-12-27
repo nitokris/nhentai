@@ -1,7 +1,9 @@
 package com.nitokrisalpha.application.adapter.db
 
 import com.nitokrisalpha.application.adapter.db.exposed.WorkTable
+import com.nitokrisalpha.business.builder.buildMetadata
 import com.nitokrisalpha.business.entity.Work
+import com.nitokrisalpha.business.entity.WorkId
 import com.nitokrisalpha.business.repository.WorkRepository
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -14,14 +16,15 @@ class WorkRepositoryDB : WorkRepository {
     override fun save(entity: Work): Work {
         transaction {
             WorkTable.insert {
-                it[title] = entity.title
-                it[cover] = entity.cover
-                it[format] = entity.format
-                it[series] = entity.series
-                it[summary] = entity.summary
-                it[subjectMatter] = entity.subjectMatter
-                it[images] = entity.images.joinToString(",")
-                it[tags] = entity.tags.joinToString(",")
+                it[workId] = entity.id.value
+                it[title] = entity.metaData.title
+                it[cover] = entity.metaData.cover
+                it[format] = entity.metaData.format
+                it[series] = entity.metaData.series
+                it[summary] = entity.metaData.summary
+                it[subjectMatter] = entity.metaData.subjectMatter
+                it[images] = entity.metaData.images.joinToString(",")
+                it[tags] = entity.metaData.tags.joinToString(",")
             }
         }
         return entity
@@ -32,18 +35,30 @@ class WorkRepositoryDB : WorkRepository {
             WorkTable.selectAll()
                 .where { WorkTable.id eq id }
                 .firstOrNull()?.let {
-                    Work(
-//                    id = it[WorkTable.id].value,
-                        title = it[WorkTable.title],
-                        cover = it[WorkTable.cover],
-                        format = it[WorkTable.format],
-                        series = it[WorkTable.series],
-                        summary = it[WorkTable.summary],
-                        subjectMatter = it[WorkTable.subjectMatter],
-                        images = if (it[WorkTable.images].isBlank()) emptySet() else it[WorkTable.images].split(",")
-                            .toSet(),
-                        tags = if (it[WorkTable.tags].isBlank()) emptySet() else it[WorkTable.tags].split(",").toSet()
-                    )
+                    val id = WorkId(it[WorkTable.workId])
+                    val meta = buildMetadata {
+                        title(it[WorkTable.title])
+                        cover(it[WorkTable.cover])
+                        format(it[WorkTable.format])
+                        series(it[WorkTable.series])
+                        summary(it[WorkTable.summary])
+                        subjectMatter(it[WorkTable.subjectMatter])
+                        setImages(
+                            if (it[WorkTable.images].isBlank()) {
+                                emptyList()
+                            } else {
+                                it[WorkTable.images].split(",")
+                            }
+                        )
+                        setTags(
+                            if (it[WorkTable.tags].isBlank()) {
+                                emptyList()
+                            } else {
+                                it[WorkTable.tags].split(",")
+                            }
+                        )
+                    }
+                    Work(id = id, metaData = meta)
                 }
         }
     }

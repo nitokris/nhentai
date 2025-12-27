@@ -20,7 +20,7 @@ class SukebeiApi(
     }
 
     override fun searchResource(work: Work) {
-        val title = work.title
+        val title = work.metaData.title
         val request = Request(Method.GET, SUKEBEI_SEARCH_URL)
             .query("f", "0")
             .query("c", "1_0")

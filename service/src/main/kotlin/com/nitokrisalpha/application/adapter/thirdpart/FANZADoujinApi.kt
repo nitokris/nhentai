@@ -4,9 +4,7 @@ import com.fleeksoft.ksoup.Ksoup
 import com.nitokrisalpha.application.configuration.FANZAApiProperties
 import com.nitokrisalpha.application.logging.log
 import com.nitokrisalpha.business.entity.Circle
-import com.nitokrisalpha.business.entity.PublishChannel
 import com.nitokrisalpha.business.entity.Work
-import com.nitokrisalpha.business.entity.work
 import com.nitokrisalpha.business.thirdpart.PublishChannelApi
 import com.nitokrisalpha.business.thirdpart.Sort
 import org.apache.commons.lang3.StringUtils
@@ -32,8 +30,6 @@ class FANZADoujinApi(
         }
 
         val REGEX = """cid=(d_\d+)""".toRegex()
-
-
     }
 
     override fun circleWorks(circle: Circle, sort: Sort): List<Work> {
@@ -78,16 +74,14 @@ class FANZADoujinApi(
                 break
             }
             for (productItem in productItems) {
-                val work = Work()
-                work.cover = productItem.select("img").attr("src")
+                val cover = productItem.select("img").attr("src")
                 val titleElement = productItem.select(".tileListTtl__txt a")
-                work.title = titleElement.text()
+                val title = titleElement.text()
+                val work = Work(cover, title)
                 // https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_632387/
                 val href = titleElement.attr("href")
                 val matchResult = REGEX.find(href)
                 matchResult?.groups?.get(1)?.value?.let {
-                    val workChannel = PublishChannel(CHANNEL_NAME, it)
-                    work.channels.add(workChannel)
                     result.add(work)
                 }
             }
@@ -118,40 +112,40 @@ class FANZADoujinApi(
         }
         val html = response.bodyString()
         val documents = Ksoup.parse(html)
-        return work {
-            val titleWrapper = documents.selectFirst(".l-areaProductTitle h1")
-            if (titleWrapper != null) {
-                titleWrapper.select("span").remove()
-                title = titleWrapper.text()
-            }
-            //
-            val detailWrapper = documents.selectFirst(".l-areaVariableBoxWrap")
-            detailWrapper?.let {
-                val imageWrapper = it.select(".l-areaProductImage")
-                imageWrapper.select("img").forEach { img ->
-                    val href = img.attr("src")
-                    href.let {
-                        val url = URI(href).toURL()
-                        val fileName = url.file
-                        // d_691394jp-001.jpg
-                        if (!StringUtils.containsIgnoreCase(fileName, "js")) {
-                            images += href
-                        }
+        val titleWrapper = documents.selectFirst(".l-areaProductTitle h1")
+        var title = ""
+        val images = mutableSetOf<String>()
+        var summary = ""
+        if (titleWrapper != null) {
+            titleWrapper.select("span").remove()
+            title = titleWrapper.text()
+        }
+        //
+        val detailWrapper = documents.selectFirst(".l-areaVariableBoxWrap")
+        detailWrapper?.let {
+            val imageWrapper = it.select(".l-areaProductImage")
+            imageWrapper.select("img").forEach { img ->
+                val href = img.attr("src")
+                href.let {
+                    val url = URI(href).toURL()
+                    val fileName = url.file
+                    // d_691394jp-001.jpg
+                    if (!StringUtils.containsIgnoreCase(fileName, "js")) {
+                        images += href
                     }
                 }
-                val infoWrapper = it.select(".l-areaProductInfo")
-                // todo 遍历所有的信息，转换为对应的类属性
-                infoWrapper.select("div.productInformation__item").forEach { item ->
-                    val ttl = item.select(".informationList__ttl")
-                    val txt = item.select(".informationList__txt")
-                    log.info("ttl is:{}", ttl.text())
-                    log.info("txt is:{}", txt.text())
-                }
-                val summaryWrapper = it.select(".l-areaProductSummary")
-                summary = summaryWrapper.html()
             }
+            val infoWrapper = it.select(".l-areaProductInfo")
+            // todo 遍历所有的信息，转换为对应的类属性
+            infoWrapper.select("div.productInformation__item").forEach { item ->
+                val ttl = item.select(".informationList__ttl")
+                val txt = item.select(".informationList__txt")
+                log.info("ttl is:{}", ttl.text())
+                log.info("txt is:{}", txt.text())
+            }
+            val summaryWrapper = it.select(".l-areaProductSummary")
+            summary = summaryWrapper.html()
         }
-
-
+        return Work(title, work.cover, "", "", summary, work.tags, images, work.subjectMatter)
     }
 }

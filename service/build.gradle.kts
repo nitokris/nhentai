@@ -80,5 +80,5 @@ tasks.withType<Test> {
 
 tasks.withType<BootJar> {
     archiveFileName.set("app.jar")
-    mainClass.set("com.nitokrisalpha.NcomicSpringbootApplicationKt")
+    mainClass.set("com.nitokrisalpha.NComicSpringbootApplicationKt")
 }

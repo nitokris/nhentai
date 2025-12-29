@@ -11,6 +11,8 @@ class WorkMetadataBuilder {
     private val _tags: MutableSet<String> = linkedSetOf()
     private val _images: MutableSet<String> = linkedSetOf()
     var subjectMatter: String = ""
+    var channelIdentifier: String = ""
+    var channelName: String = ""
 
     fun title(value: String) = apply { this.title = value }
     fun cover(value: String) = apply { this.cover = value }

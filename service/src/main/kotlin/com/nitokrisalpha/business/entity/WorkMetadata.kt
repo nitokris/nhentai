@@ -16,7 +16,13 @@ data class WorkMetadata(
     // 预览图
     val images: Set<String> = mutableSetOf(),
     // 題材
-    val subjectMatter: String = ""
+    val subjectMatter: String = "",
+
+    // 发售渠道的唯一标识
+    val channelIdentifier: String = "",
+
+    // 发售渠道名称
+    val channelName: String = ""
 ) {
     companion object {
         val EMPTY = WorkMetadata()

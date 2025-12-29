@@ -2,7 +2,7 @@ package com.nitokrisalpha.application.adapter.thirdpart
 
 import com.nitokrisalpha.business.entity.Circle
 import com.nitokrisalpha.business.entity.PublishChannel
-import com.nitokrisalpha.business.entity.Work
+import com.nitokrisalpha.business.entity.WorkMetadata
 import com.nitokrisalpha.business.thirdpart.PublishChannelApi
 import com.nitokrisalpha.business.thirdpart.Sort
 import org.http4k.core.HttpHandler
@@ -17,11 +17,11 @@ class FanzaCommercialAPI(
     override fun circleWorks(
         circle: Circle,
         sort: Sort
-    ): List<Work> {
+    ): List<WorkMetadata> {
         TODO("Not yet implemented")
     }
 
-    override fun workDetail(channel: PublishChannel): Work {
+    override fun workDetail(channel: PublishChannel): WorkMetadata {
         TODO("Not yet implemented")
     }
 }

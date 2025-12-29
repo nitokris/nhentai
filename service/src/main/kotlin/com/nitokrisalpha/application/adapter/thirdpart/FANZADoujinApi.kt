@@ -6,8 +6,7 @@ import com.nitokrisalpha.application.logging.log
 import com.nitokrisalpha.business.builder.buildMetadata
 import com.nitokrisalpha.business.entity.Circle
 import com.nitokrisalpha.business.entity.PublishChannel
-import com.nitokrisalpha.business.entity.Work
-import com.nitokrisalpha.business.entity.WorkId
+import com.nitokrisalpha.business.entity.WorkMetadata
 import com.nitokrisalpha.business.thirdpart.PublishChannelApi
 import com.nitokrisalpha.business.thirdpart.Sort
 import org.apache.commons.lang3.StringUtils
@@ -35,7 +34,7 @@ class FANZADoujinApi(
         val REGEX = """cid=(d_\d+)""".toRegex()
     }
 
-    override fun circleWorks(circle: Circle, sort: Sort): List<Work> {
+    override fun circleWorks(circle: Circle, sort: Sort): List<WorkMetadata> {
 
         // todo 这里的channel find设计需要更改
         val channel = circle.channels.find {
@@ -45,7 +44,7 @@ class FANZADoujinApi(
         if (channel == null) {
             return emptyList()
         }
-        val result = mutableListOf<Work>()
+        val result = mutableListOf<WorkMetadata>()
         var curPage = 1
         while (true) {
             val url = buildString {
@@ -83,21 +82,17 @@ class FANZADoujinApi(
                 val workMetadata = buildMetadata {
                     this.title = title
                     this.cover = cover
+                    channelIdentifier = channel.identifier
+                    channelName = channel.name
                 }
-                val work = Work(WorkId(), workMetadata)
-                // https://www.dmm.co.jp/dc/doujin/-/detail/=/cid=d_632387/
-                val href = titleElement.attr("href")
-                val matchResult = REGEX.find(href)
-                matchResult?.groups?.get(1)?.value?.let {
-                    result.add(work)
-                }
+                result.add(workMetadata)
             }
             curPage++
         }
         return result
     }
 
-    override fun workDetail(channel: PublishChannel): Work {
+    override fun workDetail(channel: PublishChannel): WorkMetadata {
         val url = buildString {
             append("https://www.dmm.co.jp/dc/doujin/-/detail/=")
             append("/cid=${channel.identifier}/")
@@ -109,11 +104,11 @@ class FANZADoujinApi(
         val response = client(request)
         if (!response.status.successful) {
             log.error("failed to get work detail page:{}", response.status.description)
-            return Work.DUMMY
+            return WorkMetadata.EMPTY
         }
         val html = response.bodyString()
         val documents = Ksoup.parse(html)
-        val workMetadata = buildMetadata {
+        return buildMetadata {
             // 解析标题
             documents.selectFirst(".l-areaProductTitle h1")?.let {
                 it.select("span").remove()
@@ -126,7 +121,6 @@ class FANZADoujinApi(
                     href.let {
                         val url = URI(href).toURL()
                         val fileName = url.file
-                        // d_691394jp-001.jpg
                         if (!StringUtils.containsIgnoreCase(fileName, "js")) {
                             this.addImage(href)
                         }
@@ -154,6 +148,5 @@ class FANZADoujinApi(
                 }
             }
         }
-        return Work(WorkId(), workMetadata)
     }
 }

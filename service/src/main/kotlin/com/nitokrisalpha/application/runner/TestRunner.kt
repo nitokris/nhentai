@@ -1,6 +1,6 @@
 package com.nitokrisalpha.application.runner
 
-import com.nitokrisalpha.application.adapter.thirdpart.FANZADoujinApi
+import com.nitokrisalpha.application.adapter.fanza.FANZADoujinApi
 import com.nitokrisalpha.application.logging.log
 import com.nitokrisalpha.business.entity.PublishChannel
 import org.springframework.boot.ApplicationArguments

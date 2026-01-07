@@ -1,7 +1,6 @@
-package com.nitokrisalpha.application.adapter.thirdpart
+package com.nitokrisalpha.application.adapter.fanza
 
 import com.fleeksoft.ksoup.Ksoup
-import com.nitokrisalpha.application.configuration.FANZAApiProperties
 import com.nitokrisalpha.application.logging.log
 import com.nitokrisalpha.business.builder.buildMetadata
 import com.nitokrisalpha.business.entity.Circle
@@ -9,17 +8,17 @@ import com.nitokrisalpha.business.entity.PublishChannel
 import com.nitokrisalpha.business.entity.WorkMetadata
 import com.nitokrisalpha.business.thirdpart.PublishChannelApi
 import com.nitokrisalpha.business.thirdpart.Sort
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.StringUtils
 import org.http4k.core.HttpHandler
-import org.http4k.core.Method
-import org.http4k.core.Request
 import org.springframework.stereotype.Component
 import java.net.URI
 
 @Component
 class FANZADoujinApi(
     val client: HttpHandler,
-    val fanzaApiProperties: FANZAApiProperties
+    val builder: FazaRequestBuilder
 ) : PublishChannelApi {
 
     companion object {
@@ -57,12 +56,10 @@ class FANZADoujinApi(
                     append("page=$curPage/")
                 }
             }
-            val request = Request(Method.GET, url)
-                .header("cookie", fanzaApiProperties.cookie)
-                .header("user-agent", fanzaApiProperties.userAgent)
-                .header("dnt", fanzaApiProperties.dnt)
-
-            val response = client(request)
+            val request = builder.createGet(url)
+            val response = runBlocking(Dispatchers.IO) {
+                client(request)
+            }
             if (!response.status.successful) {
                 log.error("failed to get circle:{} works from fanza doujin", circle.name)
                 break
@@ -97,10 +94,7 @@ class FANZADoujinApi(
             append("https://www.dmm.co.jp/dc/doujin/-/detail/=")
             append("/cid=${channel.identifier}/")
         }
-        val request = Request(Method.GET, url)
-            .header("cookie", fanzaApiProperties.cookie)
-            .header("user-agent", fanzaApiProperties.userAgent)
-            .header("dnt", fanzaApiProperties.dnt)
+        val request = builder.createGet(url)
         val response = client(request)
         if (!response.status.successful) {
             log.error("failed to get work detail page:{}", response.status.description)

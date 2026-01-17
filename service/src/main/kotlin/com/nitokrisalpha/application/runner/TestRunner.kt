@@ -12,7 +12,7 @@ class TestRunner(
     private val fanzaDoujinApi: FANZADoujinApi
 ) : ApplicationRunner {
     override fun run(args: ApplicationArguments?) {
-        val channel = PublishChannel(FANZADoujinApi.CHANNEL_NAME, "d_691394")
+        val channel = PublishChannel(FANZADoujinApi.CHANNEL_NAME, "d_588971")
         val workDetail = fanzaDoujinApi.workDetail(channel)
         log.info(workDetail.toString())
 //        val circle = Circle("DOLL PLAY")

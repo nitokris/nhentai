@@ -9,6 +9,8 @@ nhentai:
     previews: ./static/previews
 spring:
   datasource:
-    url: jdbc:sqlite:file::memory:?cache=shared
+    url: jdbc:sqlite:nhentai-dev.db?journal_mode=WAL&busy_timeout=5000
+    driver-class-name: org.sqlite.JDBC
   exposed:
     show-sql: true
+    generate-ddl: true

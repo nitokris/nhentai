@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-@RequestMapping("circle/record")
+@RequestMapping("circle")
 class RecordCircleController(
     private val recordCircleService: RecordCircleService
 ) {
@@ -16,6 +16,11 @@ class RecordCircleController(
     @PostMapping()
     fun recordCircle(param: RecordCircleParam) {
         recordCircleService.recordCircle(param)
+    }
+
+    @PostMapping("urls")
+    fun recordCircle(urls: List<String>) {
+
     }
 
 }

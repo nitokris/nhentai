@@ -14,7 +14,6 @@ class PublishChannelRepoImpl : PublishChannelRepo {
     }
 
     override fun save(channels: List<PublishChannel>) {
-
         transaction {
             for (channel in channels) {
                 PublishChannelTable.insert {

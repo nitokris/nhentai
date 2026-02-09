@@ -65,6 +65,9 @@ dependencies {
     implementation("org.drewcarlson:qbittorrent-client:1.1.0-alpha02")
     implementation("org.drewcarlson:qbittorrent-models:1.1.0-alpha02")
     implementation("io.ktor:ktor-client-okhttp:3.0.0")
+
+    // Source: https://mvnrepository.com/artifact/org.postgresql/postgresql
+    implementation("org.postgresql:postgresql:42.7.9")
 }
 
 kotlin {

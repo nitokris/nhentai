@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Transactional
 class PublishChannelInit(
     private val publishChannelRepo: PublishChannelRepo,
 ) : ApplicationRunner {
@@ -19,6 +18,7 @@ class PublishChannelInit(
         )
     }
 
+    @Transactional
     override fun run(args: ApplicationArguments?) {
         publishChannelRepo.save(defaultChannels)
     }
